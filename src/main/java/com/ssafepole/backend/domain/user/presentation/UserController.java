@@ -41,4 +41,18 @@ public class UserController {
         emailService.sendVerificationCode(email);
         return ResponseEntity.ok("인증 코드가 전송되었습니다.");
     }
+
+    @PostMapping("/sign-up/verify-code")
+    @Operation(summary = "인증 코드 검증", description = "이메일로 받은 인증 코드를 검증하는 API", tags = {"회원가입"})
+    public ResponseEntity<String> verifyCode(@RequestParam String email,
+        @RequestParam String code) {
+
+        boolean isVerified = emailService.verifyEmailCode(email, code);
+
+        if (!isVerified) {
+            return ResponseEntity.badRequest().body("잘못된 인증 코드입니다.");
+        }
+        return ResponseEntity.ok("이메일 인증이 완료되었습니다.");
+    }
+
 }
