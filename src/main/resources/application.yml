@@ -1,6 +1,11 @@
 spring:
   application:
     name: backend
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: ${NAVER_MAIL_USERNAME}
+    password: ${NAVER_MAIL_PASSWORD}
 
 springdoc:
   swagger-ui:
