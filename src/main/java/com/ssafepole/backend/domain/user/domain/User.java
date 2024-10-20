@@ -16,9 +16,13 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
+@Getter
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -26,13 +30,19 @@ public class User {
     @Column(name = "user_id")
     private Short id;
 
+    @Column(nullable = false)
     private String username;
 
+    @Column(nullable = false, unique = true)  // 유니크 설정
     private String email;
 
     private String passwordHash;
 
+    @Column(nullable = false, unique = true)  // 유니크 설정
     private String nickname;
+
+    @Column(nullable = false)
+    private Short classNumber;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -42,7 +52,17 @@ public class User {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
+    private final List<Post> posts = new ArrayList<>();
+
+    public User(String username, String email, String passwordHash, String nickname,
+        Short classNumber) {
+        this.username = username;
+        this.email = email;
+        this.role = Role.USER;
+        this.passwordHash = passwordHash;
+        this.nickname = nickname;
+        this.classNumber = classNumber;
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -54,3 +74,4 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 }
+
