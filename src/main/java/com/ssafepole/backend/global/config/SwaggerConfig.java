@@ -1,4 +1,4 @@
-package com.ssafepole.backend.config;
+package com.ssafepole.backend.global.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
