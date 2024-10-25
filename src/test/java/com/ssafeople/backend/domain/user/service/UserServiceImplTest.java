@@ -1,9 +1,9 @@
-package com.ssafepole.backend.domain.user.service;
+package com.ssafeople.backend.domain.user.service;
 
-import com.ssafepole.backend.domain.user.domain.User;
-import com.ssafepole.backend.domain.user.domain.repository.UserRepository;
-import com.ssafepole.backend.domain.user.presentation.dto.request.UserSignUpRequest;
-import com.ssafepole.backend.global.exception.user.DuplicatedEmailException;
+import com.ssafeople.backend.domain.user.domain.User;
+import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
+import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
+import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.junit.jupiter.api.Test;
