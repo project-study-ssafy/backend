@@ -1,5 +1,7 @@
 package com.ssafeople.backend.domain.user.service;
 
+import com.ssafeople.backend.global.exception.email.EmailNotVerifiedException;
+import com.ssafeople.backend.global.exception.email.InvalidVerificationCodeException;
 import java.security.SecureRandom;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -39,29 +41,26 @@ public class EmailServiceImpl implements EmailService {
         message.setSubject("회원가입 인증 코드");
         message.setText("인증 코드는 " + code + "입니다.");
 
-        // 이메일 전송
-        mailSender.send(message);
+        mailSender.send(message); // 이메일 전송
     }
 
     @Override
-    public boolean verifyEmailCode(String email, String code) {
+    public void verifyEmailCode(String email, String code) {
         String storedCode = verificationCodes.get(email); // 임시 저장소에서 코드 가져오기
         boolean isVerified = storedCode != null && storedCode.equals(code);
 
-        log.info("이메일: {}", email);
-        log.info("인증 코드: {}, 저장된 인증 코드: {}", code, storedCode);
-
-        if (isVerified) {
-            emailVerificationStatus.put(email, true);
-            verificationCodes.remove(email); // 인증 후 코드 삭제
+        if (!isVerified) {
+            throw InvalidVerificationCodeException.EXCEPTION;
         }
-
-        return isVerified;
+        emailVerificationStatus.put(email, true);
+        verificationCodes.remove(email); // 인증 후 코드 삭제
     }
 
     @Override
-    public boolean isEmailVerified(String email) {
-        return emailVerificationStatus.getOrDefault(email, false);
+    public void isEmailVerified(String email) {
+         if (emailVerificationStatus.get(email) == null ) {
+             throw  EmailNotVerifiedException.EXCEPTION;
+         }
     }
 
     @Override

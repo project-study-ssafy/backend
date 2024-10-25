@@ -4,9 +4,9 @@ public interface EmailService {
 
     void sendVerificationCode(String email);
 
-    boolean verifyEmailCode(String email, String code);
+    void verifyEmailCode(String email, String code);
 
-    boolean isEmailVerified(String email);
+    void isEmailVerified(String email);
 
     void deleteEmailVerificationCode(String email);
 }
