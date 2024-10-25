@@ -34,29 +34,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void validateEmail(String email) {
-        if (isEmailExists(email)) {
-            throw new DuplicatedEmailException("이메일이 이미 사용 중입니다.");
-        }
+        userRepository.findByEmail(email).ifPresent(user -> {
+            throw DuplicatedEmailException.EXCEPTION;
+        });
     }
 
     @Override
     public void validateSignUpRequest(UserSignUpRequest signUpRequest) {
 
-        if (isEmailExists(signUpRequest.getEmail())) {
-            throw new DuplicatedEmailException("이메일이 이미 사용 중입니다.");
-        }
+        userRepository.findByEmail(signUpRequest.getEmail()).ifPresent(user -> {
+            throw DuplicatedEmailException.EXCEPTION;
+        });
 
-        // 별명 중복 확인
-        if (isNicknameExists(signUpRequest.getNickname())) {
-            throw new DuplicatedNicknameException("별명이 이미 사용 중입니다.");
-        }
-    }
-
-    private boolean isEmailExists(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    private boolean isNicknameExists(String nickname) {
-        return userRepository.existsByNickname(nickname);
+        userRepository.findByNickname(signUpRequest.getNickname()).ifPresent( user -> {
+            throw DuplicatedNicknameException.EXCEPTION;
+        });
     }
 }
