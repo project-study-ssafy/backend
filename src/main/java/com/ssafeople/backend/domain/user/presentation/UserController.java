@@ -7,6 +7,7 @@ import com.ssafeople.backend.domain.user.presentation.dto.request.UserVerifyCode
 import com.ssafeople.backend.domain.user.service.EmailService;
 import com.ssafeople.backend.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,6 +32,10 @@ public class UserController {
 
     private final UserService userService;
     private final EmailService emailService;
+    private final JwtUtil jwtUtil;
+
+    @Value("${spring.auth.jwt.access.header}")
+    private String accessHeader;
 
     @PostMapping("/sign-up/send-verification-code")
     @Operation(summary = "인증 코드 전송", description = "회원가입 시 이메일로 인증 코드를 전송하는 API", tags = {"회원가입"})
@@ -53,25 +58,23 @@ public class UserController {
 
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입", description = "회원가입을 위한 API", tags = {"회원가입"})
-    public ResponseEntity<String> signUp(@Valid @RequestBody UserSignUpRequest signUpRequest) {
+    public ResponseEntity<Void> signUp(@Valid @RequestBody UserSignUpRequest signUpRequest, HttpServletResponse response) {
 
-        try {
-            userService.validateSignUpRequest(signUpRequest);
-        } catch (DuplicatedEmailException |DuplicatedNicknameException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        log.info("Sign-up request received: {}", signUpRequest);
 
-        // 이메일 인증 확인
-        if (!emailService.isEmailVerified(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body("이메일 인증이 필요합니다.");
-        }
+        userService.validateSignUpRequest(signUpRequest);
+        emailService.isEmailVerified(signUpRequest.getEmail());
 
         // 사용자 정보 저장 (비밀번호 해싱 포함)
-        userService.completeSignUp(signUpRequest);
-
+        User user = userService.completeSignUp(signUpRequest);
         // 인증 코드 삭제
         emailService.deleteEmailVerificationCode(signUpRequest.getEmail());
 
-        return ResponseEntity.ok("회원가입이 완료되었습니다.");
+        String token = jwtUtil.createToken(user.getEmail(), user.getRole().getValue(),
+            60 * 60 * 10 * 1000L);
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setHeader(accessHeader, "Bearer " + token);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
