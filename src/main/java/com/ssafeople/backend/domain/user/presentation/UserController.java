@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,15 +45,9 @@ public class UserController {
 
     @PostMapping("/sign-up/verify-code")
     @Operation(summary = "인증 코드 검증", description = "이메일로 받은 인증 코드를 검증하는 API", tags = {"회원가입"})
-    public ResponseEntity<String> verifyCode(@RequestParam String email,
-        @RequestParam String code) {
-
-        boolean isVerified = emailService.verifyEmailCode(email, code);
-
-        if (!isVerified) {
-            return ResponseEntity.badRequest().body("잘못된 인증 코드입니다.");
-        }
-        return ResponseEntity.ok("이메일 인증이 완료되었습니다.");
+    public void verifyCode(
+        @Valid @RequestBody UserVerifyCodeRequest verifyCodeRequest) {
+        emailService.verifyEmailCode(verifyCodeRequest.getEmail(), verifyCodeRequest.getCode());
     }
 
 
