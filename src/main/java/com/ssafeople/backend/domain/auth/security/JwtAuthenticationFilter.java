@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.objectMapper = objectMapper;
         this.jwtUtil = jwtUtil;
 
-        this.setFilterProcessesUrl("/api/users/login");
+        this.setFilterProcessesUrl("/api/v1/login");
     }
 
     @Override
@@ -76,6 +76,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         jwtUtil.sendAccessToken(response, "Bearer " + token);
 
         SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK.value(), null);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(objectMapper.writeValueAsString(successResponse));
     }
 

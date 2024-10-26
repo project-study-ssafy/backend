@@ -45,6 +45,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(code.getStatus(), code.getReason(),
             request.getRequestURL().toString()
         );
+
+        log.info(errorResponse.getPath());
+
         return ResponseEntity.status(HttpStatus.valueOf(code.getStatus())).body(errorResponse);
     }
 
@@ -65,6 +68,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errorMessages,
             url
         );
+
+        log.info(errorResponse.getPath());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -101,7 +106,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         List<FieldError> errors = ex.getBindingResult().getFieldErrors();
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
-        String url = servletWebRequest.getRequest().getRequestURI();
+        String url = servletWebRequest.getRequest().getRequestURL().toString();
 
         Map<String, String> fieldAndErrorMessages = errors.stream()
             .collect(
@@ -124,7 +129,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("HttpRequestMethodNotSupportedException {}", ex.getMessage());
 
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
-        String url = servletWebRequest.getRequest().getRequestURI();
+        String url = servletWebRequest.getRequest().getRequestURL().toString();
         ErrorResponse errorResponse = new ErrorResponse(status.value(),
             ErrorCode.METHOD_NOT_ALLOWED.getReason(), url);
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResponse);
@@ -137,7 +142,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("NoResourceFoundException {}", ex.getMessage());
 
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
-        String url = servletWebRequest.getRequest().getRequestURI();
+        String url = servletWebRequest.getRequest().getRequestURL().toString();
         ErrorResponse errorResponse = new ErrorResponse(status.value(),
             ErrorCode.URL_INPUT_ERROR.getReason(), url);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);

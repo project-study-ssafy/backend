@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @NonNullApi
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -34,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String authorization = request.getHeader(accessHeader);
 
         // 인증이 필수인 경로일 경우, 토큰이 없거나 형식이 잘못된 경우 예외 발생
-        if (requestURI.startsWith("/api/auth/")) {
+        if (requestURI.startsWith("/api/v1/auth/")) {
             if (authorization == null || !authorization.startsWith("Bearer ")) {
                 log.info("Token is null or invalid for protected path: {}", requestURI);
                 throw InvalidTokenException.EXCEPTION;
