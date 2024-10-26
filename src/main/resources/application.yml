@@ -7,6 +7,12 @@ spring:
     username: ${NAVER_MAIL_USERNAME}
     password: ${NAVER_MAIL_PASSWORD}
 
+  auth:
+    jwt:
+      secretKey: ${JWT_SECRET_KEY}
+      access:
+        header: ${JWT_ACCESS_HEADER}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
