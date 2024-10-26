@@ -2,12 +2,12 @@ package com.ssafeople.backend.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafeople.backend.domain.auth.security.JwtAuthenticationFilter;
-import com.ssafeople.backend.domain.auth.security.JwtFilter;
 import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.global.exception.ExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,6 +28,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
+    private final OncePerRequestFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -46,10 +48,9 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/users/sign-up/**").permitAll()
-                .requestMatchers("/api/users/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
+                .requestMatchers("/api/v1/login").permitAll()
                 .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
-                .requestMatchers("/api/auth/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -60,7 +61,7 @@ public class SecurityConfig {
 
         http.addFilterBefore(new ExceptionFilter(objectMapper), JwtAuthenticationFilter.class);
 
-        http.addFilterBefore(new JwtFilter(jwtUtil), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

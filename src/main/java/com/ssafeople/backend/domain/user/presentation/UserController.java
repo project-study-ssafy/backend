@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     private final UserService userService;
@@ -37,7 +37,7 @@ public class UserController {
     @Value("${spring.auth.jwt.access.header}")
     private String accessHeader;
 
-    @PostMapping("/sign-up/send-verification-code")
+    @PostMapping("/send-verification-code")
     @Operation(summary = "인증 코드 전송", description = "회원가입 시 이메일로 인증 코드를 전송하는 API", tags = {"회원가입"})
     public void sendVerificationCode(
         @RequestParam @NotBlank(message = "이메일을 입력해주세요.") @Email(message = "유효한 이메일 형식이 아닙니다.") String email) {
@@ -48,7 +48,7 @@ public class UserController {
         log.info("인증 코드 전송");
     }
 
-    @PostMapping("/sign-up/verify-code")
+    @PostMapping("/verify-code")
     @Operation(summary = "인증 코드 검증", description = "이메일로 받은 인증 코드를 검증하는 API", tags = {"회원가입"})
     public void verifyCode(
         @Valid @RequestBody UserVerifyCodeRequest verifyCodeRequest) {
@@ -56,7 +56,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/sign-up")
+    @PostMapping
     @Operation(summary = "회원가입", description = "회원가입을 위한 API", tags = {"회원가입"})
     public ResponseEntity<Void> signUp(@Valid @RequestBody UserSignUpRequest signUpRequest, HttpServletResponse response) {
 
