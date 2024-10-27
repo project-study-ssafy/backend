@@ -2,9 +2,11 @@ package com.ssafeople.backend.domain.user.service;
 
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
+import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
+import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void validateEmail(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
             throw DuplicatedEmailException.EXCEPTION;
@@ -40,6 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void validateSignUpRequest(UserSignUpRequest signUpRequest) {
 
         userRepository.findByEmail(signUpRequest.getEmail()).ifPresent(user -> {
@@ -49,5 +53,12 @@ public class UserServiceImpl implements UserService {
         userRepository.findByNickname(signUpRequest.getNickname()).ifPresent( user -> {
             throw DuplicatedNicknameException.EXCEPTION;
         });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserInfoVo getUserInfo(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> UserNotFoundException.EXCEPTION).getUserInfo();
     }
 }
