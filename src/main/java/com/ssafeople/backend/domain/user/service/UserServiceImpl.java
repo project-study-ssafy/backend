@@ -4,6 +4,7 @@ import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
 import com.ssafeople.backend.global.exception.user.UserNotFoundException;
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
             throw DuplicatedEmailException.EXCEPTION;
         });
 
-        userRepository.findByNickname(signUpRequest.getNickname()).ifPresent( user -> {
+        userRepository.findByNickname(signUpRequest.getNickname()).ifPresent(user -> {
             throw DuplicatedNicknameException.EXCEPTION;
         });
     }
@@ -61,4 +62,27 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> UserNotFoundException.EXCEPTION).getUserInfo();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+    }
+
+    @Override
+    public void updateProcess(User user, UserUpdateRequest userUpdateRequest) {
+        // 사용자의 원래 닉네임을 가져옵니다.
+        String currentNickname = user.getNickname();
+
+        // 새로운 닉네임이 원래 닉네임과 다르면서 다른 사용자에게 이미 존재하는지 확인합니다.
+        if (!userUpdateRequest.getNickname().equals(currentNickname)) {
+            userRepository.findByNickname(userUpdateRequest.getNickname()).ifPresent(u -> {
+                throw DuplicatedNicknameException.EXCEPTION;
+            });
+        }
+
+        // 사용자 정보 업데이트
+        user.update(userUpdateRequest.getUsername(), userUpdateRequest.getNickname());
+    }
+
 }
