@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
         // User 객체 생성
         User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), passwordHash,
-            signUpRequest.getNickname(), signUpRequest.getClassNumber());
+            signUpRequest.getNickname());
 
         // 사용자 저장
         return userRepository.save(user); // 저장 후 User 객체 반환

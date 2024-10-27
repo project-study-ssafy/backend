@@ -41,9 +41,6 @@ public class User {
     @Column(nullable = false, unique = true)  // 유니크 설정
     private String nickname;
 
-    @Column(nullable = false)
-    private Short classNumber;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -54,14 +51,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private final List<Post> posts = new ArrayList<>();
 
-    public User(String username, String email, String passwordHash, String nickname,
-        Short classNumber) {
+    public User(String username, String email, String passwordHash, String nickname) {
         this.username = username;
         this.email = email;
         this.role = Role.USER;
         this.passwordHash = passwordHash;
         this.nickname = nickname;
-        this.classNumber = classNumber;
     }
 
     @PrePersist

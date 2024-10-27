@@ -28,7 +28,7 @@ class UserServiceImplTest {
     @Test
     void isEmailExists_True_WhenEmailExists() {
         // Given: 이미 존재하는 유저 생성
-        User user = new User("username", "test@example.com", "passwordHash", "nickname", (short) 6);
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
         userRepository.save(user);
 
         // When & Then: validateEmail 호출 시 DuplicatedEmailException이 발생해야 함
@@ -52,7 +52,6 @@ class UserServiceImplTest {
         signUpRequest.setEmail("newuser@example.com");
         signUpRequest.setPassword("password123");
         signUpRequest.setNickname("nickname");
-        signUpRequest.setClassNumber((short) 7);
 
         // When: 회원가입을 완료하고 유저를 저장
         User savedUser = userService.completeSignUp(signUpRequest);
@@ -61,7 +60,6 @@ class UserServiceImplTest {
         assertThat(savedUser.getUsername()).isEqualTo("newUser");
         assertThat(savedUser.getEmail()).isEqualTo("newuser@example.com");
         assertThat(savedUser.getNickname()).isEqualTo("nickname");
-        assertThat(savedUser.getClassNumber()).isEqualTo((short) 7);
 
         // 비밀번호는 암호화된 형태로 저장되었는지 확인
         assertThat(savedUser.getPasswordHash()).isNotEqualTo("password123");
