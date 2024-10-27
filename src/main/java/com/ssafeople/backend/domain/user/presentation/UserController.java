@@ -2,6 +2,7 @@ package com.ssafeople.backend.domain.user.presentation;
 
 import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.domain.user.domain.User;
+import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserVerifyCodeRequest;
 import com.ssafeople.backend.domain.user.service.EmailService;
@@ -16,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,4 +80,13 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @GetMapping
+    @Operation(summary = "회원 조회", description = "회원 조회 위한 API")
+    public ResponseEntity<UserInfoVo> getUser(@AuthenticationPrincipal String email) {
+        UserInfoVo userInfo = userService.getUserInfo(email);
+        log.info("email: {}", email);
+        return ResponseEntity.ok(userInfo);
+    }
+
 }
