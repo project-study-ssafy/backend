@@ -35,14 +35,6 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String authorization = request.getHeader(accessHeader);
 
-        // 인증이 필수인 경로일 경우, 토큰이 없거나 형식이 잘못된 경우 예외 발생
-        if (requestURI.startsWith("/api/v1/auth/")) {
-            if (authorization == null || !authorization.startsWith("Bearer ")) {
-                log.info("Token is null or invalid for protected path: {}", requestURI);
-                throw InvalidTokenException.EXCEPTION;
-            }
-        } else {
-            // 인증이 필수 아닌 경로에서 토큰이 없으면 다음 필터로 넘어감
         // 스웨거 JWT 검사 없이 요청 처리
         if (requestURI.startsWith("/api-docs/") || requestURI.startsWith("/swagger-ui/")) {
             filterChain.doFilter(request, response);
@@ -55,6 +47,11 @@ public class JwtFilter extends OncePerRequestFilter {
             if (authorization == null || !authorization.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
                 return;
+            }
+        } else {
+            if (authorization == null || !authorization.startsWith("Bearer ")) {
+                log.info("Token is null or invalid for protected path: {}", requestURI);
+                throw InvalidTokenException.EXCEPTION;
             }
         }
 
