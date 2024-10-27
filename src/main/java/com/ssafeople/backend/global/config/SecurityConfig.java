@@ -2,6 +2,7 @@ package com.ssafeople.backend.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafeople.backend.domain.auth.security.JwtAuthenticationFilter;
+import com.ssafeople.backend.domain.auth.security.JwtFilter;
 import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.global.exception.ExceptionFilter;
 import lombok.RequiredArgsConstructor;
@@ -59,9 +60,9 @@ public class SecurityConfig {
             new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration),
                 objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-        http.addFilterBefore(new ExceptionFilter(objectMapper), JwtAuthenticationFilter.class);
-
         http.addFilterBefore(jwtFilter, JwtAuthenticationFilter.class);
+
+        http.addFilterBefore(new ExceptionFilter(objectMapper), JwtFilter.class);
 
         return http.build();
     }
