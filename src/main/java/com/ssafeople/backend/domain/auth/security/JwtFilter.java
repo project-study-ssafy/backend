@@ -42,7 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // 인증이 필수가 아닌 경로
-        if (requestURI.startsWith("/api/v1/users/") && request.getMethod()
+        if (requestURI.startsWith("/api/v1/users") && request.getMethod()
             .equalsIgnoreCase("POST")) {
             if (authorization == null || !authorization.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
