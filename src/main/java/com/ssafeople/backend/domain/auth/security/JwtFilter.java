@@ -43,6 +43,15 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } else {
             // 인증이 필수 아닌 경로에서 토큰이 없으면 다음 필터로 넘어감
+        // 스웨거 JWT 검사 없이 요청 처리
+        if (requestURI.startsWith("/api-docs/") || requestURI.startsWith("/swagger-ui/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 인증이 필수가 아닌 경로
+        if (requestURI.startsWith("/api/v1/users/") && request.getMethod()
+            .equalsIgnoreCase("POST")) {
             if (authorization == null || !authorization.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
                 return;
