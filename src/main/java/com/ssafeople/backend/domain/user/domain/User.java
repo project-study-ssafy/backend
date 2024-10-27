@@ -79,5 +79,10 @@ public class User {
             .role(role.getValue())
             .build();
     }
+
+    public void update(String username, String nickname) {
+        this.username = username;
+        this.nickname = nickname;
+    }
 }
 
