@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Range;
 
 @Getter
 @Setter
@@ -25,9 +24,6 @@ public class UserSignUpRequest {
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*]).{8,16}$",
         message = "비밀번호는 숫자, 문자, 특수문자를 포함해야 합니다.")
     private String password;
-
-    @Range(min = 1, max = 7, message = "1~7사이의 값을 입력해주세요.")
-    private Short classNumber;
 
     @NotBlank(message = "별명을 입력해주세요.")
     @Size(max = 20, message = "별명은 20글자까지 가능합니다.")

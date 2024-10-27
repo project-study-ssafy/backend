@@ -14,6 +14,7 @@ public enum ErrorCode {
     EXPIRED_TOKEN(401, "토큰이 만료되었습니다."),
 
     URL_INPUT_ERROR(404, "잘못된 URL 입니다"),
+    USER_NOT_FOUND(404,"사용자가 존재하지 않습니다"),
     METHOD_NOT_ALLOWED(405, "http 메소드가 잘못되었습니다."),
 
     DUPLICATE_EMAIL(422, "이미 존재하는 이메일입니다."),
