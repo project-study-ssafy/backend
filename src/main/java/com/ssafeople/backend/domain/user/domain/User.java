@@ -1,6 +1,7 @@
 package com.ssafeople.backend.domain.user.domain;
 
 import com.ssafeople.backend.domain.post.domain.Post;
+import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -67,6 +68,16 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public UserInfoVo getUserInfo() {
+        return UserInfoVo.builder()
+            .id(id)
+            .username(username)
+            .nickname(nickname)
+            .email(email)
+            .role(role.getValue())
+            .build();
     }
 }
 
