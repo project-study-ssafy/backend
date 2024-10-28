@@ -3,6 +3,7 @@ package com.ssafeople.backend.domain.user.presentation;
 import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
+import com.ssafeople.backend.domain.user.presentation.dto.request.EmailVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserVerifyCodeRequest;
@@ -11,8 +12,6 @@ import com.ssafeople.backend.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -45,11 +43,11 @@ public class UserController {
     @PostMapping("/send-verification-code")
     @Operation(summary = "인증 코드 전송", description = "회원가입 시 이메일로 인증 코드를 전송하는 API", tags = {"회원가입"})
     public void sendVerificationCode(
-        @RequestParam @NotBlank(message = "이메일을 입력해주세요.") @Email(message = "유효한 이메일 형식이 아닙니다.") String email) {
+        @RequestBody EmailVerificationRequest emailVerificationRequest) {
 
-        userService.validateEmail(email);
+        userService.validateEmail(emailVerificationRequest.getEmail());
 
-        emailService.sendVerificationCode(email);
+        emailService.sendVerificationCode(emailVerificationRequest.getEmail());
         log.info("인증 코드 전송");
     }
 
