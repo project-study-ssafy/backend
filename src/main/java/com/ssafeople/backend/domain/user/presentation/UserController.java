@@ -4,6 +4,7 @@ import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserVerifyCodeRequest;
 import com.ssafeople.backend.domain.user.service.EmailService;
 import com.ssafeople.backend.domain.user.service.UserService;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,7 +63,8 @@ public class UserController {
 
     @PostMapping
     @Operation(summary = "회원가입", description = "회원가입을 위한 API", tags = {"회원가입"})
-    public ResponseEntity<Void> signUp(@Valid @RequestBody UserSignUpRequest signUpRequest, HttpServletResponse response) {
+    public ResponseEntity<Void> signUp(@Valid @RequestBody UserSignUpRequest signUpRequest,
+        HttpServletResponse response) {
 
         log.info("Sign-up request received: {}", signUpRequest);
 
@@ -85,8 +88,16 @@ public class UserController {
     @Operation(summary = "회원 조회", description = "회원 조회 위한 API")
     public ResponseEntity<UserInfoVo> getUser(@AuthenticationPrincipal String email) {
         UserInfoVo userInfo = userService.getUserInfo(email);
-        log.info("email: {}", email);
         return ResponseEntity.ok(userInfo);
+    }
+
+    @PatchMapping
+    @Operation(summary = "회원 정보 변경", description = "회원 정보 변경 API")
+    public ResponseEntity<UserInfoVo> updateUserInfo(@AuthenticationPrincipal String email,
+        @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+        User user = userService.getUser(email);
+        userService.updateProcess(user, userUpdateRequest);
+        return ResponseEntity.ok(user.getUserInfo());
     }
 
 }
