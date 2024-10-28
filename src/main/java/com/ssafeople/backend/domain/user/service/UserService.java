@@ -18,4 +18,6 @@ public interface UserService {
     User getUser(String email);
 
     void updateProcess(User user, UserUpdateRequest userUpdateRequest);
+
+    void withdraw(User user);
 }
