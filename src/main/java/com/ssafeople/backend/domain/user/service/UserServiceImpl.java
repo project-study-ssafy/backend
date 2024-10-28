@@ -85,4 +85,9 @@ public class UserServiceImpl implements UserService {
         user.update(userUpdateRequest.getUsername(), userUpdateRequest.getNickname());
     }
 
+    @Override
+    public void withdraw(User user) {
+        userRepository.delete(user);
+    }
+
 }
