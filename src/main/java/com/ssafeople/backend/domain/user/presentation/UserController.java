@@ -44,7 +44,7 @@ public class UserController {
     @PostMapping("/send-verification-code")
     @Operation(summary = "인증 코드 전송", description = "회원가입 시 이메일로 인증 코드를 전송하는 API", tags = {"회원가입"})
     public void sendVerificationCode(
-        @RequestBody EmailVerificationRequest emailVerificationRequest) {
+        @Valid @RequestBody EmailVerificationRequest emailVerificationRequest) {
 
         userService.validateEmail(emailVerificationRequest.getEmail());
 
