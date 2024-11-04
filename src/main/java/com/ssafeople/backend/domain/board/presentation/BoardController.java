@@ -30,4 +30,15 @@ public class BoardController {
         }
         return board;
     }
+
+    @GetMapping
+    public void updateBoardinfo(String boardName, String newDescription) throws Exception {
+        if (boardName == null) {
+            throw new Exception("Invalid board name");
+        }
+        if (newDescription == null) {
+            throw new Exception("Invalid new description");
+        }
+        boardService.updateBoardInfo(boardName, newDescription);
+    }
 }

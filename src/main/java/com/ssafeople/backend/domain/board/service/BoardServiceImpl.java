@@ -16,10 +16,25 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
 
     public List<Board> getAllBoards() {
-        return boardRepository.findAll();
+        List<Board> boards = boardRepository.findAll();
+
+        if (boards.isEmpty()) {
+            return null;
+        }
+
+        return boards;
     }
 
-    public Board getBoardById(Long id) {
-        return boardRepository.findById(id);
+    public Board getBoardById(Long id) throws Exception {
+        Board board = boardRepository.findById(id);
+        if (board == null) {
+            throw new Exception("Board By Id is null");
+        }
+        return board;
+
+    }
+
+    public void updateBoardInfo(String newBoardName, String newDescription) {
+        boardRepository.updateBoardByBoardNameAndDescription(newBoardName, newDescription);
     }
 }

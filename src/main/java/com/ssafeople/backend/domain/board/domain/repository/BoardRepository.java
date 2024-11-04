@@ -10,4 +10,6 @@ public interface BoardRepository extends Repository<Board, Long> {
     List<Board> findAll();
 
     Board findById(Long id);
+
+    void updateBoardByBoardNameAndDescription(String newBoardName, String newDescription);
 }
