@@ -1,15 +1,8 @@
 package com.ssafeople.backend.domain.board.domain.repository;
 
 import com.ssafeople.backend.domain.board.domain.Board;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface BoardRepository extends Repository<Board, Long> {
-
-    List<Board> findAll();
-
-    Board findById(Long id);
-
+public interface BoardRepository extends JpaRepository<Board, Short> {
     void updateBoardByBoardNameAndDescription(String newBoardName, String newDescription);
 }

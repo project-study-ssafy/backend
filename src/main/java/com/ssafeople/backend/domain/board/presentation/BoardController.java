@@ -23,7 +23,7 @@ public class BoardController {
     }
 
     @GetMapping
-    public Board getBoardById(Long id) throws Exception {
+    public Board getBoardById(Short id) throws Exception {
         Board board = boardService.getBoardById(id);
         if (board == null) {
             throw new Exception("Invalid board id");
