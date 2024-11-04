@@ -1,6 +1,5 @@
 package com.ssafeople.backend.domain.board.domain;
 
-import com.ssafeople.backend.domain.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Board")
+@Table(name = "board")
 @Getter
 @NoArgsConstructor
 public class Board {
