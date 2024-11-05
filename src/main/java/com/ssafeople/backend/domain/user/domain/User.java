@@ -84,5 +84,9 @@ public class User {
         this.username = username;
         this.nickname = nickname;
     }
+
+    public void changePassword(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 }
 
