@@ -3,6 +3,7 @@ package com.ssafeople.backend.domain.user.service;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
@@ -108,5 +109,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public UserInfoVo changePassword(ChangePasswordRequest changePasswordRequest) {
+        User user = getUser(changePasswordRequest.getEmail());
+        String passwordHash = passwordEncoder.encode(changePasswordRequest.getPassword());
+        user.changePassword(passwordHash);
+        return user.getUserInfo();
+    }
 
 }
