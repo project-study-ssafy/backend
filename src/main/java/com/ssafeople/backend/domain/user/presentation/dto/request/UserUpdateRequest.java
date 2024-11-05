@@ -15,4 +15,7 @@ public class UserUpdateRequest {
     @NotBlank(message = "별명을 입력해주세요.")
     @Size(max = 20, message = "별명은 20글자까지 가능합니다.")
     private String nickname;
+
+    @Size(max = 255, message = "한줄 소개는 255자 까지 가능합니다.")
+    private String biography;
 }

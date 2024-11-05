@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 사용자 정보 업데이트
-        user.update(userUpdateRequest.getUsername(), userUpdateRequest.getNickname());
+        user.update(userUpdateRequest.getUsername(), userUpdateRequest.getNickname(), userUpdateRequest.getBiography());
     }
 
     @Override
@@ -116,5 +116,4 @@ public class UserServiceImpl implements UserService {
         user.changePassword(passwordHash);
         return user.getUserInfo();
     }
-
 }

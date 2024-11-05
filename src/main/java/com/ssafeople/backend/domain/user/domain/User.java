@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -52,6 +53,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private final List<Post> posts = new ArrayList<>();
 
+    @Lob
+    private String markdown;
+
+    private String biography;
+
     public User(String username, String email, String passwordHash, String nickname) {
         this.username = username;
         this.email = email;
@@ -77,12 +83,15 @@ public class User {
             .nickname(nickname)
             .email(email)
             .role(role.getValue())
+            .markdown(markdown)
+            .biography(biography)
             .build();
     }
 
-    public void update(String username, String nickname) {
+    public void update(String username, String nickname, String biography) {
         this.username = username;
         this.nickname = nickname;
+        this.biography = biography;
     }
 
     public void changePassword(String passwordHash) {

@@ -11,6 +11,12 @@ spring:
     username: sa
     password:
 
+  auth:
+    jwt:
+      secretKey: ${JWT_SECRET_KEY}
+      access:
+        header: ${JWT_ACCESS_HEADER}
+
   jpa:
     hibernate:
       ddl-auto: create-drop
