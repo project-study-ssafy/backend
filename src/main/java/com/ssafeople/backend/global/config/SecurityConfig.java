@@ -38,27 +38,29 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-        AuthenticationConfiguration configuration) throws Exception {
+            AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http.csrf(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests((auth) -> auth
-                .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
-                .requestMatchers("/api/v1/login").permitAll()
-                .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
-                .anyRequest().authenticated())
-            .sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
+                        .requestMatchers("/api/v1/users/**").permitAll()
+                        .requestMatchers("/api/v1/login").permitAll()
+                        .requestMatchers("/resources/static/**").permitAll()
+                        .requestMatchers("/", "/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().permitAll())//.authenticated())
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterAt(
-            new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration),
-                objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration),
+                        objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http.addFilterBefore(jwtFilter, JwtAuthenticationFilter.class);
 

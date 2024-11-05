@@ -2,7 +2,6 @@ package com.ssafeople.backend.domain.board.presentation;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.service.BoardService;
-// import com.ssafeople.backend.domain.post.domain.Post;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +30,8 @@ public class BoardController {
 
     @GetMapping("/{id}")
     @Operation(summary = "게시판 조회", description = "특정 게시판을 조회하는 API")
-    public Board getBoardById(@PathVariable Short id) {
-        return boardService.getBoardById(id);
+    public ResponseEntity<Board> getBoardById(@PathVariable Short id) {
+        return ResponseEntity.ok(boardService.getBoardById(id));
     }
 
 }
