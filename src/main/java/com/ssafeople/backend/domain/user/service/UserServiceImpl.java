@@ -3,10 +3,12 @@ package com.ssafeople.backend.domain.user.service;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
+import com.ssafeople.backend.global.exception.user.NotMatchEmailAndUsernameException;
 import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -89,5 +91,22 @@ public class UserServiceImpl implements UserService {
     public void withdraw(User user) {
         userRepository.delete(user);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateEmailAndUsername(
+        ChangePasswordVerificationRequest changePasswordVerificationRequest) {
+
+        String email = changePasswordVerificationRequest.getEmail();
+        String username = changePasswordVerificationRequest.getUsername();
+
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> UserNotFoundException.EXCEPTION);
+
+        if (!user.getUsername().equals(username)) {
+            throw NotMatchEmailAndUsernameException.EXCEPTION;
+        }
+    }
+
 
 }
