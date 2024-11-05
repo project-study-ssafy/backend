@@ -3,6 +3,8 @@ package com.ssafeople.backend.domain.user.presentation;
 import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.EmailVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
@@ -104,6 +106,28 @@ public class UserController {
     public void deleteUser(@AuthenticationPrincipal String email) {
         User user = userService.getUser(email);
         userService.withdraw(user);
+    }
+
+    @PostMapping("/change-password")
+    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API", tags = {"비밀번호 변경"})
+    public ResponseEntity<UserInfoVo> changePassword(
+        @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+
+        emailService.isEmailVerified(changePasswordRequest.getEmail());
+
+        UserInfoVo userinfoVo = userService.changePassword(changePasswordRequest);
+
+        return ResponseEntity.ok(userinfoVo);
+    }
+
+    @PostMapping("/send-verification-code-change-password")
+    public void sendVerificationCodeChangePassword(
+        @Valid @RequestBody ChangePasswordVerificationRequest changePasswordVerificationRequest) {
+
+        userService.validateEmailAndUsername(changePasswordVerificationRequest);
+        emailService.sendVerificationCodeChangePassword(
+            changePasswordVerificationRequest.getEmail());
+
     }
 
 }

@@ -9,4 +9,6 @@ public interface EmailService {
     void isEmailVerified(String email);
 
     void deleteEmailVerificationCode(String email);
+
+    void sendVerificationCodeChangePassword(String email);
 }

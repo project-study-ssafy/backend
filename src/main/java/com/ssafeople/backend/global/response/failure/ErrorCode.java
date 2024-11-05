@@ -9,6 +9,7 @@ public enum ErrorCode {
 
     INVALID_VERIFICATION_CODE(400, "유효하지 않은 인증번호입니다."),
     EMAIL_NOT_VERIFIED(400, "인증되지 않은 이메일입니다."),
+    NOT_MATCH_EMAIL_USERNAME(400, "사용자의 이메일과 이름이 일치하지 않습니다."),
 
     INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),
     EXPIRED_TOKEN(401, "토큰이 만료되었습니다."),

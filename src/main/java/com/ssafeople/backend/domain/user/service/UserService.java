@@ -2,6 +2,8 @@ package com.ssafeople.backend.domain.user.service;
 
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 
@@ -20,4 +22,8 @@ public interface UserService {
     void updateProcess(User user, UserUpdateRequest userUpdateRequest);
 
     void withdraw(User user);
+
+    void validateEmailAndUsername(ChangePasswordVerificationRequest changePasswordVerificationRequest);
+
+    UserInfoVo changePassword(ChangePasswordRequest changePasswordRequest);
 }
