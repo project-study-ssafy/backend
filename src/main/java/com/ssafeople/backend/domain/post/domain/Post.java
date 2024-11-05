@@ -1,5 +1,6 @@
 package com.ssafeople.backend.domain.post.domain;
 
+import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.user.domain.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

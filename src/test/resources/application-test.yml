@@ -5,6 +5,12 @@ spring:
     username: ${NAVER_MAIL_USERNAME}
     password: ${NAVER_MAIL_PASSWORD}
 
+  auth:
+    jwt:
+      secretKey: ${JWT_SECRET_KEY}
+      access:
+        header: ${JWT_ACCESS_HEADER}
+
   datasource:
     url: jdbc:h2:mem:test
     driver-class-name: org.h2.Driver

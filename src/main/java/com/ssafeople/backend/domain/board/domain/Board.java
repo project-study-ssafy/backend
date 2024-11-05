@@ -8,8 +8,6 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "board")
@@ -34,9 +32,6 @@ public class Board {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-    private final List<Board> boards = new ArrayList<>();
 
     public void update(String newBoardName, String newDescription) {
         this.boardName = newBoardName;

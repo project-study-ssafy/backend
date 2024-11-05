@@ -13,18 +13,6 @@ spring:
       access:
         header: ${JWT_ACCESS_HEADER}
 
-  datasource:
-    url: ${DATASOURCE_URL}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
-
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: MySQL8Dialect
-
 springdoc:
   swagger-ui:
     path: ${SWAGGER_UI}

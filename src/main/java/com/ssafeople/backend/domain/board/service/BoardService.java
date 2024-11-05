@@ -7,7 +7,5 @@ import java.util.List;
 public interface BoardService {
     List<Board> getAllBoards();
 
-    Board getBoardById(Short id) throws Exception;
-
-    void updateBoardInfo(String boardName, String newDescription);
+    Board getBoardById(Short id);
 }
