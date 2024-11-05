@@ -3,10 +3,13 @@ package com.ssafeople.backend.domain.user.service;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
+import com.ssafeople.backend.global.exception.user.NotMatchEmailAndUsernameException;
 import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +41,8 @@ class UserServiceImplTest {
         userRepository.save(user);
 
         // When & Then: validateEmail 호출 시 DuplicatedEmailException이 발생해야 함
-        assertThrows(DuplicatedEmailException.class, () -> userService.validateEmail("test@example.com"));
+        assertThrows(DuplicatedEmailException.class,
+            () -> userService.validateEmail("test@example.com"));
     }
 
     @Test
@@ -66,7 +70,8 @@ class UserServiceImplTest {
         userSignUpRequest.setNickname("nickname");
 
         // When & Then: 중복된 별명으로 회원가입시 예외 발생
-        assertThrows(DuplicatedNicknameException.class, () -> userService.validateSignUpRequest(userSignUpRequest));
+        assertThrows(DuplicatedNicknameException.class,
+            () -> userService.validateSignUpRequest(userSignUpRequest));
 
     }
 
@@ -117,7 +122,8 @@ class UserServiceImplTest {
         userRepository.save(user);
 
         // When & Then 존재하지 않는 이메일르 조회하면 예외가 발생
-        assertThrows(UserNotFoundException.class, () -> userService.getUserInfo("test2@example.com"));
+        assertThrows(UserNotFoundException.class,
+            () -> userService.getUserInfo("test2@example.com"));
     }
 
     @Test
@@ -153,7 +159,8 @@ class UserServiceImplTest {
         userUpdateRequest.setNickname("nickname");
 
         // Then: 정보를 변경할 수 없는 예외 발생
-        assertThrows(DuplicatedNicknameException.class,() -> userService.updateProcess(user2, userUpdateRequest));
+        assertThrows(DuplicatedNicknameException.class,
+            () -> userService.updateProcess(user2, userUpdateRequest));
     }
 
     @Test
@@ -187,4 +194,58 @@ class UserServiceImplTest {
         // Then: 사용자가 조회되지 않는다.
         assertThrows(UserNotFoundException.class, () -> userService.getUser("test@example.com"));
     }
+
+    @Test
+    @DisplayName("사용자 이름 이메일 확인 성공")
+    void checkEmailAndUsername_Success() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        userRepository.save(user);
+
+        // when: 동일한 이메일과 이름으로 전송을 하면
+        ChangePasswordVerificationRequest changePasswordVerificationRequest = new ChangePasswordVerificationRequest();
+        changePasswordVerificationRequest.setEmail(user.getEmail());
+        changePasswordVerificationRequest.setUsername(user.getUsername());
+
+        // then
+        assertDoesNotThrow(() -> userService.validateEmailAndUsername(changePasswordVerificationRequest));
+
+    }
+
+    @Test
+    @DisplayName("사용자 이름 이메일 확인 실패")
+    void checkEmailAndUsername_Fail() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        userRepository.save(user);
+
+        // when: 동일한 이메일과 다른 이름 으로 전송을 하면
+        ChangePasswordVerificationRequest changePasswordVerificationRequest = new ChangePasswordVerificationRequest();
+        changePasswordVerificationRequest.setEmail(user.getEmail());
+        changePasswordVerificationRequest.setUsername("다른 이름");
+
+        // then
+        assertThrows(NotMatchEmailAndUsernameException.class, () -> userService.validateEmailAndUsername(changePasswordVerificationRequest));
+    }
+
+    @Test
+    @DisplayName("비밀 번호 변공 성공")
+    void changePassword_Success() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        userRepository.save(user);
+
+        // when: 비밀번호 변경
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setEmail(user.getEmail());
+        changePasswordRequest.setPassword("newPasswordHash");
+        userService.changePassword(changePasswordRequest);
+
+        // then: 변경이 됨
+        assertThat(user.getPasswordHash()).isNotEqualTo("passwordHash");
+    }
+
 }
