@@ -68,6 +68,21 @@ public class EmailServiceImpl implements EmailService {
         emailVerificationStatus.remove(email);
     }
 
+    @Override
+    public void sendVerificationCodeChangePassword(String email) {
+        String code = generateVerificationCode();
+        verificationCodes.put(email, code);
+
+        // 이메일 내용 설정
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setFrom(fromEmail);
+        message.setSubject("비밀번호 찾기 인증 코드");
+        message.setText("인증 코드는 " + code + "입니다.");
+
+        mailSender.send(message); // 이메일 전송
+    }
+
     private String generateVerificationCode() {
         StringBuilder code = new StringBuilder(CODE_LENGTH);
 

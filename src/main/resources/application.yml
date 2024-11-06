@@ -13,6 +13,16 @@ spring:
       access:
         header: ${JWT_ACCESS_HEADER}
 
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/test
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
 springdoc:
   swagger-ui:
     path: ${SWAGGER_UI}
@@ -23,3 +33,4 @@ springdoc:
     path: ${API_DOCS}
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
+
