@@ -33,8 +33,8 @@ public class Board {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public void update(String newBoardName, String newDescription) {
-        this.boardName = newBoardName;
-        this.description = newDescription;
+    public Board(String boardName, String description) {
+        this.boardName = boardName;
+        this.description = description;
     }
 }
