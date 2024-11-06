@@ -2,6 +2,8 @@ package com.ssafeople.backend.domain.board.service;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
+import com.ssafeople.backend.global.exception.board.BoardListEmptyException;
+import com.ssafeople.backend.global.exception.board.BoardNotInRepositoryException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,7 @@ public class BoardServiceImpl implements BoardService {
         List<Board> boards = boardRepository.findAll();
 
         if (boards.isEmpty()) {
-            return Collections.emptyList();
+            throw BoardListEmptyException.EXCEPTION;
         }
 
         return boards;
@@ -31,7 +33,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional(readOnly = true)
     public Board getBoardById(Short id) {
-        return boardRepository.findById(id).orElseThrow(() -> new RuntimeException());
+        return boardRepository.findById(id).orElseThrow(() -> BoardNotInRepositoryException.EXCEPTION);
     }
 
 

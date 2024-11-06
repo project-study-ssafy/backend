@@ -2,6 +2,7 @@ package com.ssafeople.backend.domain.board.service;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
+import com.ssafeople.backend.global.exception.board.BoardNotInRepositoryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -41,7 +43,7 @@ class BoardServiceImplTest {
     }
 
     @Test
-    @DisplayName("게시판 목록 조회 실패")
+    @DisplayName("게시판 목록 조회가 실패하면 예외가 발생한다.")
     void getAllBoards_fail() {
         boardRepository.deleteAll();
         assertThat(boardService.getAllBoards().size()).isEqualTo(0);
@@ -55,7 +57,7 @@ class BoardServiceImplTest {
 
         Board board = boardService.getBoardById(board1.getId());
 
-        assertThat(board.getBoardName()).isEqualTo("newBoardName1");
+        assertThat(board).isEqualTo(board1);
     }
 
     @Test
@@ -65,7 +67,7 @@ class BoardServiceImplTest {
         boardRepository.save(board1);
 
         Short a = 999;
-        assertThatThrownBy(() -> boardService.getBoardById(a));
+        assertThrows(BoardNotInRepositoryException.class, () -> boardService.getBoardById(a));
    }
 
 }
