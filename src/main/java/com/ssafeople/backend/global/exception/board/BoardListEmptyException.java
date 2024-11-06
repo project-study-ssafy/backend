@@ -7,6 +7,6 @@ public class BoardListEmptyException extends SsafeopleException {
     public static final SsafeopleException EXCEPTION = new BoardListEmptyException();
 
     private BoardListEmptyException() {
-        super(ErrorCode.INVALID_BOARD_ID);
+        super(ErrorCode.EMPTY_BOARD_LIST);
     }
 }

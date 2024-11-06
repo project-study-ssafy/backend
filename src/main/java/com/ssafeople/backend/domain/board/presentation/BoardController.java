@@ -4,6 +4,7 @@ import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.service.BoardService;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import com.ssafeople.backend.domain.user.service.UserService;
+import com.ssafeople.backend.global.exception.board.BoardListEmptyException;
 import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class BoardController {
         try {
             List<Board> boards = boardService.getAllBoards();
             map.put("boards", boards);
-        } catch (Exception e) {
+        } catch (BoardListEmptyException e) {
             log.info("게시판 비어있음");
         }
 
