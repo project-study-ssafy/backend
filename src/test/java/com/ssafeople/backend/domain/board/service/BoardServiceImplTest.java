@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-@ActiveProfiles("BoardServiceImplTest")
+@ActiveProfiles("test")
 @Transactional
 class BoardServiceImplTest {
 
@@ -28,11 +28,8 @@ class BoardServiceImplTest {
     @Test
     @DisplayName("게시판 목록 반환 성공")
     void getAllBoards_success() {
-        Board board1 = new Board();
-        Board board2 = new Board();
-
-        board1.update("newBoardName1", "Description1");
-        board2.update("newBoardName2", "Description2");
+        Board board1 = new Board("newBoardName1", "Description1");
+        Board board2 = new Board("newBoardName2", "Description2");
 
         boardRepository.save(board1);
         boardRepository.save(board2);
@@ -53,8 +50,7 @@ class BoardServiceImplTest {
     @Test
     @DisplayName("특정 게시판 조회 성공")
     void getBoardById_success() {
-        Board board1 = new Board();
-        board1.update("newBoardName1", "Description1");
+        Board board1 = new Board("newBoardName1", "Description1");
         boardRepository.save(board1);
 
         Board board = boardService.getBoardById(board1.getId());
@@ -65,13 +61,11 @@ class BoardServiceImplTest {
     @Test
     @DisplayName("게시판 없는거 조회")
     void getBoardById_fail() {
-        Board board1 = new Board();
-        board1.update("newBoardName1", "Description1");
+        Board board1 = new Board("newBoardName1", "Description1");
         boardRepository.save(board1);
 
         Short a = 999;
         assertThatThrownBy(() -> boardService.getBoardById(a));
-
    }
 
 }
