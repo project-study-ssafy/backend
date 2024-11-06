@@ -21,7 +21,10 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(422, "이미 존재하는 이메일입니다."),
     DUPLICATE_NICKNAME(422, "이미 존재하는 닉네입입니다."),
 
-    INTERNAL_SERVER_ERROR(500, "내부 서버 에러");
+    INTERNAL_SERVER_ERROR(500, "내부 서버 에러"),
+
+    INVALID_BOARD_ID(404, "유효하지 않은 게시판 접근"),
+    EMPTY_BOARD_LIST(400, "게시판 목록이 존재하지 않음");
 
     private final int status;
     private final String reason;

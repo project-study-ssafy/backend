@@ -7,6 +7,7 @@ import com.ssafeople.backend.global.exception.ExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -47,13 +48,16 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/index.html", "/api/v1/users/**").permitAll() // /index.html 추가
+                .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
+                .requestMatchers("/api/v1/login").permitAll()
                 .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
-                .requestMatchers("/static/**", "/assets/**").permitAll()
                 .anyRequest().authenticated())
             .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        http.addFilterAt(
+            new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration),
+                objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http.addFilterBefore(new ExceptionFilter(objectMapper),
             UsernamePasswordAuthenticationFilter.class);
