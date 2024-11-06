@@ -2,7 +2,6 @@ package com.ssafeople.backend.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafeople.backend.domain.auth.security.JwtAuthenticationFilter;
-import com.ssafeople.backend.domain.auth.security.JwtFilter;
 import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.global.exception.ExceptionFilter;
 import lombok.RequiredArgsConstructor;
@@ -50,20 +49,23 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((auth) -> auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
-                .requestMatchers("/api/v1/login").permitAll()
+                .requestMatchers("/", "/api/v1/login").permitAll()
                 .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers("/static/**").permitAll()
                 .anyRequest().authenticated())
             .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterAt(
-            new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration),
-                objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new ExceptionFilter(objectMapper),
+            UsernamePasswordAuthenticationFilter.class);
 
-        http.addFilterBefore(jwtFilter, JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.addFilterBefore(new ExceptionFilter(objectMapper), JwtFilter.class);
+        http.addFilterAt(new JwtAuthenticationFilter(
+                authenticationManager(authenticationConfiguration), objectMapper, jwtUtil),
+            UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }
