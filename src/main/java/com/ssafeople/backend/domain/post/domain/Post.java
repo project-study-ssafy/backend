@@ -44,13 +44,12 @@ public class Post {
     @OneToMany(mappedBy = "posts", cascade = CascadeType.ALL)
     private final List<Comment> comments = new ArrayList<>();
 
-    public Post(String title, String content) {
+    public Post(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.user = user;
+
+        user.getPosts().add(this);
     }
 
-    public void update(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
 }
