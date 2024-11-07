@@ -11,4 +11,8 @@ public class Comment {
     @Column(name = "comment_id")
     private String id;
 
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
 }

@@ -39,6 +39,9 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "posts", cascade = CascadeType.ALL)
+    private final List<Comment> comments = new ArrayList<>();
+
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
