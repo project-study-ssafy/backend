@@ -2,6 +2,7 @@ package com.ssafeople.backend.domain.board.service;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
+import com.ssafeople.backend.global.exception.board.BoardListEmptyException;
 import com.ssafeople.backend.global.exception.board.BoardNotInRepositoryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class BoardServiceImplTest {
     @DisplayName("게시판 목록 조회가 실패하면 예외가 발생한다.")
     void getAllBoards_fail() {
         boardRepository.deleteAll();
-        assertThat(boardService.getAllBoards().size()).isEqualTo(0);
+        assertThrows(BoardListEmptyException.class, () -> boardService.getAllBoards());
     }
 
     @Test
