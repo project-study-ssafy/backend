@@ -1,5 +1,6 @@
 package com.ssafeople.backend.domain.post.domain;
 
+import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.comment.domain.Comment;
 import com.ssafeople.backend.domain.user.domain.User;
 import jakarta.persistence.*;
@@ -26,6 +27,10 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Board board;
+
     @Column(name = "title")
     private String title;
 
@@ -41,13 +46,14 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "posts", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private final List<Comment> comments = new ArrayList<>();
 
-    public Post(String title, String content, User user) {
+    public Post(String title, String content, User user, Board board) {
         this.title = title;
         this.content = content;
         this.user = user;
+        this.board = board;
 
         user.getPosts().add(this);
     }
