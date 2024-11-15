@@ -1,9 +1,10 @@
 package com.ssafeople.backend.domain.post.service;
 
 import com.ssafeople.backend.domain.post.domain.Post;
+import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
 
 import java.util.List;
 
 public interface PostService {
-    List<Post> getPostsByBoardId(Short boardId);
+    List<PostInfoVO> getPostsByBoardId(Short boardId);
 }
