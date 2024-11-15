@@ -24,7 +24,10 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "내부 서버 에러"),
 
     INVALID_BOARD_ID(404, "유효하지 않은 게시판 접근"),
-    EMPTY_BOARD_LIST(400, "게시판 목록이 존재하지 않음");
+    EMPTY_BOARD_LIST(400, "게시판 목록이 존재하지 않음"),
+
+    INVALID_POST_ID(404, "현재 접근하려는 게시판이 존재하지 않습니다."),
+    EMPTY_POST_LIST(400, "게시글 목록이 존재하지 않음");
 
     private final int status;
     private final String reason;
