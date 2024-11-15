@@ -2,6 +2,7 @@ package com.ssafeople.backend.domain.post.domain;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.comment.domain.Comment;
+import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
 import com.ssafeople.backend.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
@@ -56,6 +57,20 @@ public class Post {
         this.board = board;
 
         user.getPosts().add(this);
+        board.getPosts().add(this);
+    }
+
+    public PostInfoVO getPostInfo() {
+        return PostInfoVO.builder()
+                .id(id)
+                .userId(user.getId())
+                .boardId(board.getId())
+                .title(title)
+                .content(content)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .comments(comments)
+                .build();
     }
 
 }
