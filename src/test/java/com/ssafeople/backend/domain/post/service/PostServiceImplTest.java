@@ -4,8 +4,10 @@ import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
+import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
+import com.ssafeople.backend.global.exception.post.PostListEmptyException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -44,24 +47,30 @@ public class PostServiceImplTest {
         userRepository.save(testUser);
         Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser, testBoard);
         postRepository.save(post);
+        PostInfoVO postInfoVO = post.getPostInfo();
+
         //When
-        List<Post> posts = postService.getPostsByBoardId(testBoard.getId());
+        List<PostInfoVO> posts = postService.getPostsByBoardId(testBoard.getId());
+
         //Then
         assertThat(posts.size()).isEqualTo(1);
-        assertThat(posts.get(0)).isEqualTo(post);
+        assertThat(posts.get(0).getId()).isEqualTo(postInfoVO.getId());
 
     }
 
     @Test
-    @DisplayName("게시글 목록 반환 실패")
+    @DisplayName("게시글 목록을 반환하는데 실패하면 예외를 발생시킨다.")
     void getPostsByBoardId_fail() {
         //Given
-
-        //When
-
-        //Then
-
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        Board testBoard1 = new Board("TEST1", "TEST BOARD 1");
+        boardRepository.save(testBoard);
+        boardRepository.save(testBoard1);
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        userRepository.save(testUser);
+        Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser,testBoard1);
+        postRepository.save(post);
+        //When & Then
+        assertThrows(PostListEmptyException.class, () -> postService.getPostsByBoardId(testBoard.getId()));
     }
-
-
 }
