@@ -1,8 +1,11 @@
 package com.ssafeople.backend.domain.post.domain;
 
+import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.comment.domain.Comment;
+import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
 import com.ssafeople.backend.domain.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
@@ -15,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 @NoArgsConstructor
+@Getter
 public class Post {
 
     @Id
@@ -25,6 +29,10 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Board board;
 
     @Column(name = "title")
     private String title;
@@ -41,15 +49,30 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "posts", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private final List<Comment> comments = new ArrayList<>();
 
-    public Post(String title, String content, User user) {
+    public Post(String title, String content, User user, Board board) {
         this.title = title;
         this.content = content;
         this.user = user;
+        this.board = board;
 
         user.getPosts().add(this);
+        board.getPosts().add(this);
+    }
+
+    public PostInfoVO getPostInfo() {
+        return PostInfoVO.builder()
+                .id(id)
+                .userId(user.getId())
+                .boardId(board.getId())
+                .title(title)
+                .content(content)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .comments(comments)
+                .build();
     }
 
 }
