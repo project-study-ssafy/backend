@@ -5,6 +5,7 @@ import com.ssafeople.backend.domain.comment.domain.Comment;
 import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
 import com.ssafeople.backend.domain.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 @NoArgsConstructor
+@Getter
 public class Post {
 
     @Id
