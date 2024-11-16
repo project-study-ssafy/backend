@@ -4,7 +4,7 @@ import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
-import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
@@ -47,14 +47,20 @@ public class PostServiceImplTest {
         userRepository.save(testUser);
         Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser, testBoard);
         postRepository.save(post);
-        PostInfoVO postInfoVO = post.getPostInfo();
+        PostSummaryResponse response =
+                PostSummaryResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .userName(post.getUser().getUsername())
+                        .createdAt(post.getCreatedAt())
+                        .build();
 
         //When
-        List<PostInfoVO> posts = postService.getPostsByBoardId(testBoard.getId());
+        List<PostSummaryResponse> posts = postService.getPostsByBoardId(testBoard.getId());
 
         //Then
         assertThat(posts.size()).isEqualTo(1);
-        assertThat(posts.get(0).getId()).isEqualTo(postInfoVO.getId());
+        assertThat(posts.get(0).getId()).isEqualTo(response.getId());
 
     }
 
@@ -68,7 +74,7 @@ public class PostServiceImplTest {
         boardRepository.save(testBoard1);
         User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
         userRepository.save(testUser);
-        Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser,testBoard1);
+        Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser, testBoard1);
         postRepository.save(post);
         //When & Then
         assertThrows(PostListEmptyException.class, () -> postService.getPostsByBoardId(testBoard.getId()));
