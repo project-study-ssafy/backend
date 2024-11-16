@@ -1,6 +1,6 @@
 package com.ssafeople.backend.domain.post.presentation;
 
-import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public ResponseEntity<List<PostInfoVO>> getPostsByBoard(@PathVariable(name="boardId") Short boardId) {
-        List<PostInfoVO> posts = postService.getPostsByBoardId(boardId);
+    public ResponseEntity<List<PostSummaryResponse>> getPostsByBoard(@PathVariable(name="boardId") Short boardId) {
+        List<PostSummaryResponse> posts = postService.getPostsByBoardId(boardId);
         return ResponseEntity.ok(posts);
     }
 }
