@@ -1,6 +1,5 @@
 package com.ssafeople.backend.domain.post.service;
 
-import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
 
 import java.util.List;
