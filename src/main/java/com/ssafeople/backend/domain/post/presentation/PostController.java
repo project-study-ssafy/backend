@@ -4,12 +4,11 @@ import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteReque
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.post.service.PostService;
 import com.ssafeople.backend.domain.user.domain.User;
-import com.ssafeople.backend.domain.user.service.UserService;
+import com.ssafeople.backend.global.util.CurrentUserUtilImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -20,7 +19,7 @@ import java.util.*;
 public class PostController {
 
     private final PostService postService;
-    private final UserService userService;
+    private final CurrentUserUtilImpl currentUserUtil;
 
     @GetMapping
     public ResponseEntity<List<PostSummaryResponse>> getPostsByBoard(@PathVariable(name="boardId") Short boardId) {
@@ -31,9 +30,9 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Void> writePost(
             @PathVariable(name="boardId") Short boardId,
-            @Valid @RequestBody PostWriteRequest request, @AuthenticationPrincipal String email
+            @Valid @RequestBody PostWriteRequest request
     ) {
-        User user = userService.getUser(email);
+        User user = currentUserUtil.getCurrentUser();
         postService.writePost(request, boardId, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
