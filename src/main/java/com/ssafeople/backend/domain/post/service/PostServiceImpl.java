@@ -52,7 +52,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Transactional
     public void writePost(PostWriteRequest request, Short boardId, User user) {
 
         Board board = boardService.getBoardById(boardId);
