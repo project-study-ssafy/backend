@@ -2,10 +2,6 @@ package com.ssafeople.backend.domain.board.presentation;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.service.BoardService;
-import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
-import com.ssafeople.backend.domain.user.service.UserService;
-import com.ssafeople.backend.global.exception.board.BoardListEmptyException;
-import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,36 +10,19 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board")
+@RequestMapping("/api/v1/boards")
 public class BoardController {
 
     private final BoardService boardService;
-    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> home(@AuthenticationPrincipal String email) {
         Map<String, Object> map = new HashMap<>();
-
-        try {
-            UserInfoVo userInfo = userService.getUserInfo(email);
-            map.put("user", userInfo);
-        } catch (UserNotFoundException e) {
-            log.info("로그인 하지 않은 사용자");
-        }
-
-        try {
-            List<Board> boards = boardService.getAllBoards();
-            map.put("boards", boards);
-        } catch (BoardListEmptyException e) {
-            log.info("게시판 비어있음");
-        }
-
         return ResponseEntity.ok(map);
     }
 

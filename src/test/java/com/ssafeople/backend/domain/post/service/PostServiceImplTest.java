@@ -4,6 +4,7 @@ import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
+import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
@@ -78,5 +79,21 @@ public class PostServiceImplTest {
         postRepository.save(post);
         //When & Then
         assertThrows(PostListEmptyException.class, () -> postService.getPostsByBoardId(testBoard.getId()));
+    }
+
+    @Test
+    @DisplayName("게시글 작성 성공")
+    void writePost_success() {
+        //Given
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        PostWriteRequest postWriteRequest = new PostWriteRequest();
+
+        postWriteRequest.setTitle("Test post title");
+        postWriteRequest.setContent("Test post content");
+
+        Post post = new Post(postWriteRequest.getTitle(), postWriteRequest.getContent(), testUser, testBoard);
+        //When & Then
+        assertThat(postRepository.save(post) == post).isTrue();
     }
 }

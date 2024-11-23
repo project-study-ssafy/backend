@@ -59,7 +59,6 @@ public class Post {
         this.board = board;
 
         user.getPosts().add(this);
-        board.getPosts().add(this);
     }
 
     public PostInfoVO getPostInfo() {

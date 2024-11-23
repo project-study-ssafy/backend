@@ -231,7 +231,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("비밀 번호 변공 성공")
+    @DisplayName("비밀 번호 변경 성공")
     void changePassword_Success() {
 
         // given: 사용자가 있을 때

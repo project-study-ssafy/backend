@@ -1,9 +1,13 @@
 package com.ssafeople.backend.domain.post.service;
 
+import com.ssafeople.backend.domain.board.domain.Board;
+import com.ssafeople.backend.domain.board.service.BoardService;
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 
+import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
+import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +25,8 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
+    private final BoardService boardService;
+
     @Override
     @Transactional(readOnly = true)
     public List<PostSummaryResponse> getPostsByBoardId(Short boardId) {
@@ -29,6 +35,7 @@ public class PostServiceImpl implements PostService {
         if (posts.isEmpty()) {
             throw PostListEmptyException.EXCEPTION;
         }
+
         List<PostSummaryResponse> responses = new ArrayList<>();
         for (Post post : posts) {
             PostSummaryResponse response =
@@ -42,5 +49,15 @@ public class PostServiceImpl implements PostService {
         }
 
         return responses;
+    }
+
+    @Override
+    public void writePost(PostWriteRequest request, Short boardId, User user) {
+
+        Board board = boardService.getBoardById(boardId);
+
+        Post post = new Post(request.getTitle(), request.getContent(), user, board);
+
+        postRepository.save(post);
     }
 }

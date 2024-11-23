@@ -11,6 +11,7 @@ import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
 import com.ssafeople.backend.global.exception.user.NotMatchEmailAndUsernameException;
 import com.ssafeople.backend.global.exception.user.UserNotFoundException;
+import com.ssafeople.backend.global.util.CurrentUserUtilImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final CurrentUserUtilImpl currentUserUtil;
 
     @Override
     public User completeSignUp(UserSignUpRequest signUpRequest) {
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+        return currentUserUtil.getCurrentUser();
     }
 
     @Override
