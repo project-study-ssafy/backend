@@ -1,4 +1,4 @@
-package com.ssafeople.backend.global.util;
+package com.ssafeople.backend.global.utils.user;
 
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CurrentUserUtilImpl implements CurrentUserUtil { //
+public class UserUtilsImpl implements UserUtils { //
 
     private final UserRepository userRepository;
 
