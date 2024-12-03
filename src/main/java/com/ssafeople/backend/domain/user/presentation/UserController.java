@@ -9,9 +9,10 @@ import com.ssafeople.backend.domain.user.presentation.dto.request.EmailVerificat
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserVerifyCodeRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.response.UserInfoResponse;
 import com.ssafeople.backend.domain.user.service.EmailService;
 import com.ssafeople.backend.domain.user.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
+import com.ssafeople.backend.global.utils.user.UserUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,34 +41,29 @@ public class UserController {
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
 
+    private final UserUtils userUtils;
+
     @Value("${spring.auth.jwt.access.header}")
     private String accessHeader;
 
     @PostMapping("/send-verification-code")
-    @Operation(summary = "인증 코드 전송", description = "회원가입 시 이메일로 인증 코드를 전송하는 API", tags = {"회원가입"})
     public void sendVerificationCode(
         @Valid @RequestBody EmailVerificationRequest emailVerificationRequest) {
 
         userService.validateEmail(emailVerificationRequest.getEmail());
-
         emailService.sendVerificationCode(emailVerificationRequest.getEmail());
         log.info("인증 코드 전송");
     }
 
     @PostMapping("/verify-code")
-    @Operation(summary = "인증 코드 검증", description = "이메일로 받은 인증 코드를 검증하는 API", tags = {"회원가입"})
     public void verifyCode(
         @Valid @RequestBody UserVerifyCodeRequest verifyCodeRequest) {
         emailService.verifyEmailCode(verifyCodeRequest.getEmail(), verifyCodeRequest.getCode());
     }
 
-
     @PostMapping
-    @Operation(summary = "회원가입", description = "회원가입을 위한 API", tags = {"회원가입"})
     public ResponseEntity<Void> signUp(@Valid @RequestBody UserSignUpRequest signUpRequest,
         HttpServletResponse response) {
-
-        log.info("Sign-up request received: {}", signUpRequest);
 
         userService.validateSignUpRequest(signUpRequest);
         emailService.isEmailVerified(signUpRequest.getEmail());
@@ -86,38 +82,45 @@ public class UserController {
     }
 
     @GetMapping
-    @Operation(summary = "회원 조회", description = "회원 조회 위한 API")
-    public ResponseEntity<UserInfoVo> getUser(@AuthenticationPrincipal String email) {
-        UserInfoVo userInfo = userService.getUserInfo(email);
-        return ResponseEntity.ok(userInfo);
+    public ResponseEntity<UserInfoResponse> getUser() {
+        User user = userUtils.getCurrentUser();
+        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
+        return ResponseEntity.ok(userInfoResponse);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserInfoResponse> getUser(@PathVariable Short userId) {
+        User user = userService.getUserById(userId);
+        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
+        return ResponseEntity.ok(userInfoResponse);
+    }
+
+
     @PatchMapping
-    @Operation(summary = "회원 정보 변경", description = "회원 정보 변경 API")
-    public ResponseEntity<UserInfoVo> updateUserInfo(@AuthenticationPrincipal String email,
+    public ResponseEntity<UserInfoResponse> updateUserInfo(
         @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
-        User user = userService.getUser(email);
+        User user = userUtils.getCurrentUser();
         userService.updateProcess(user, userUpdateRequest);
-        return ResponseEntity.ok(user.getUserInfo());
+        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
+        return ResponseEntity.ok(userInfoResponse );
     }
 
     @DeleteMapping
-    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 API")
-    public void deleteUser(@AuthenticationPrincipal String email) {
-        User user = userService.getUser(email);
+    public void deleteUser() {
+        User user = userUtils.getCurrentUser();
         userService.withdraw(user);
     }
 
     @PostMapping("/change-password")
-    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API", tags = {"비밀번호 변경"})
-    public ResponseEntity<UserInfoVo> changePassword(
+    public ResponseEntity<UserInfoResponse> changePassword(
         @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
 
         emailService.isEmailVerified(changePasswordRequest.getEmail());
+        User user = userUtils.getCurrentUser();
+        UserInfoVo userinfoVo = userService.changePassword(user, changePasswordRequest);
+        UserInfoResponse userInfoResponse = new UserInfoResponse(userinfoVo);
 
-        UserInfoVo userinfoVo = userService.changePassword(changePasswordRequest);
-
-        return ResponseEntity.ok(userinfoVo);
+        return ResponseEntity.ok(userInfoResponse);
     }
 
     @PostMapping("/send-verification-code-change-password")
@@ -127,7 +130,6 @@ public class UserController {
         userService.validateEmailAndUsername(changePasswordVerificationRequest);
         emailService.sendVerificationCodeChangePassword(
             changePasswordVerificationRequest.getEmail());
-
     }
 
 }

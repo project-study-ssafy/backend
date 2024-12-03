@@ -11,7 +11,6 @@ import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
 import com.ssafeople.backend.global.exception.user.NotMatchEmailAndUsernameException;
 import com.ssafeople.backend.global.exception.user.UserNotFoundException;
-import com.ssafeople.backend.global.util.CurrentUserUtilImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CurrentUserUtilImpl currentUserUtil;
 
     @Override
     public User completeSignUp(UserSignUpRequest signUpRequest) {
@@ -62,15 +60,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserInfoVo getUserInfo(String email) {
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> UserNotFoundException.EXCEPTION).getUserInfo();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public User getUser(String email) {
-        return currentUserUtil.getCurrentUser();
+        return userRepository.findByEmail(email).orElseThrow(() -> UserNotFoundException.EXCEPTION);
     }
 
     @Override
@@ -111,10 +102,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoVo changePassword(ChangePasswordRequest changePasswordRequest) {
-        User user = getUser(changePasswordRequest.getEmail());
+    public UserInfoVo changePassword(User user, ChangePasswordRequest changePasswordRequest) {
         String passwordHash = passwordEncoder.encode(changePasswordRequest.getPassword());
         user.changePassword(passwordHash);
         return user.getUserInfo();
+    }
+
+    @Override
+    public User getUserById(Short userId) {
+        return userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
     }
 }
