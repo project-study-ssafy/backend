@@ -9,8 +9,10 @@ import com.ssafeople.backend.domain.user.presentation.dto.request.EmailVerificat
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserVerifyCodeRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.response.UserInfoResponse;
 import com.ssafeople.backend.domain.user.service.EmailService;
 import com.ssafeople.backend.domain.user.service.UserService;
+import com.ssafeople.backend.global.utils.user.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -39,6 +41,8 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
+
+    private final UserUtils userUtils;
 
     @Value("${spring.auth.jwt.access.header}")
     private String accessHeader;
@@ -87,37 +91,39 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "회원 조회", description = "회원 조회 위한 API")
-    public ResponseEntity<UserInfoVo> getUser(@AuthenticationPrincipal String email) {
-        UserInfoVo userInfo = userService.getUserInfo(email);
-        return ResponseEntity.ok(userInfo);
+    public ResponseEntity<UserInfoResponse> getUser() {
+        User user = userUtils.getCurrentUser();
+        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
+        return ResponseEntity.ok(userInfoResponse);
     }
 
     @PatchMapping
     @Operation(summary = "회원 정보 변경", description = "회원 정보 변경 API")
-    public ResponseEntity<UserInfoVo> updateUserInfo(@AuthenticationPrincipal String email,
+    public ResponseEntity<UserInfoResponse> updateUserInfo(
         @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
-        User user = userService.getUser(email);
+        User user = userUtils.getCurrentUser();
         userService.updateProcess(user, userUpdateRequest);
-        return ResponseEntity.ok(user.getUserInfo());
+        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
+        return ResponseEntity.ok(userInfoResponse );
     }
 
     @DeleteMapping
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 API")
-    public void deleteUser(@AuthenticationPrincipal String email) {
-        User user = userService.getUser(email);
+    public void deleteUser() {
+        User user = userUtils.getCurrentUser();
         userService.withdraw(user);
     }
 
     @PostMapping("/change-password")
     @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API", tags = {"비밀번호 변경"})
-    public ResponseEntity<UserInfoVo> changePassword(
+    public ResponseEntity<UserInfoResponse> changePassword(
         @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
 
         emailService.isEmailVerified(changePasswordRequest.getEmail());
-
         UserInfoVo userinfoVo = userService.changePassword(changePasswordRequest);
+        UserInfoResponse userInfoResponse = new UserInfoResponse(userinfoVo);
 
-        return ResponseEntity.ok(userinfoVo);
+        return ResponseEntity.ok(userInfoResponse);
     }
 
     @PostMapping("/send-verification-code-change-password")
@@ -127,7 +133,6 @@ public class UserController {
         userService.validateEmailAndUsername(changePasswordVerificationRequest);
         emailService.sendVerificationCodeChangePassword(
             changePasswordVerificationRequest.getEmail());
-
     }
 
 }
