@@ -21,11 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -97,6 +97,14 @@ public class UserController {
         return ResponseEntity.ok(userInfoResponse);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserInfoResponse> getUser(@PathVariable Short userId) {
+        User user = userService.getUserById(userId);
+        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
+        return ResponseEntity.ok(userInfoResponse);
+    }
+
+
     @PatchMapping
     @Operation(summary = "회원 정보 변경", description = "회원 정보 변경 API")
     public ResponseEntity<UserInfoResponse> updateUserInfo(
@@ -120,7 +128,8 @@ public class UserController {
         @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
 
         emailService.isEmailVerified(changePasswordRequest.getEmail());
-        UserInfoVo userinfoVo = userService.changePassword(changePasswordRequest);
+        User user = userUtils.getCurrentUser();
+        UserInfoVo userinfoVo = userService.changePassword(user, changePasswordRequest);
         UserInfoResponse userInfoResponse = new UserInfoResponse(userinfoVo);
 
         return ResponseEntity.ok(userInfoResponse);

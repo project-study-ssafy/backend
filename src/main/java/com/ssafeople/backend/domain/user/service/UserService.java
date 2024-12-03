@@ -15,7 +15,6 @@ public interface UserService {
 
     void validateSignUpRequest(UserSignUpRequest signUpRequest);
 
-
     User getUser(String email);
 
     void updateProcess(User user, UserUpdateRequest userUpdateRequest);
@@ -24,5 +23,7 @@ public interface UserService {
 
     void validateEmailAndUsername(ChangePasswordVerificationRequest changePasswordVerificationRequest);
 
-    UserInfoVo changePassword(ChangePasswordRequest changePasswordRequest);
+    UserInfoVo changePassword(User user, ChangePasswordRequest changePasswordRequest);
+
+    User getUserById(Short userId);
 }

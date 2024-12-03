@@ -243,10 +243,39 @@ class UserServiceImplTest {
         ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
         changePasswordRequest.setEmail(user.getEmail());
         changePasswordRequest.setPassword("newPasswordHash");
-        userService.changePassword(changePasswordRequest);
+        userService.changePassword(user, changePasswordRequest);
 
         // then: 변경이 됨
         assertThat(user.getPasswordHash()).isNotEqualTo("passwordHash");
+    }
+
+    @Test
+    @DisplayName("id로 사용자 조회 성공")
+    void findById_Success() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        User savedUser = userRepository.save(user);
+
+        // when: 사용자 Id로 조회
+        User findUser = userService.getUserById(savedUser.getId());
+
+        // then: 두 사용자가 일치함
+        assertThat(findUser.getId()).isEqualTo(savedUser.getId());
+    }
+
+    @Test
+    @DisplayName("id로 사용자 조회 실패")
+    void findById_Fail() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        User savedUser = userRepository.save(user);
+
+        // when & then: id가 없으면 예외 발생
+        Short notMatchId = (short) (savedUser.getId() + 1);
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(notMatchId));
+
     }
 
 }
