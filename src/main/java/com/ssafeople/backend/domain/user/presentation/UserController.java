@@ -13,7 +13,6 @@ import com.ssafeople.backend.domain.user.presentation.dto.response.UserInfoRespo
 import com.ssafeople.backend.domain.user.service.EmailService;
 import com.ssafeople.backend.domain.user.service.UserService;
 import com.ssafeople.backend.global.utils.user.UserUtils;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,30 +47,23 @@ public class UserController {
     private String accessHeader;
 
     @PostMapping("/send-verification-code")
-    @Operation(summary = "인증 코드 전송", description = "회원가입 시 이메일로 인증 코드를 전송하는 API", tags = {"회원가입"})
     public void sendVerificationCode(
         @Valid @RequestBody EmailVerificationRequest emailVerificationRequest) {
 
         userService.validateEmail(emailVerificationRequest.getEmail());
-
         emailService.sendVerificationCode(emailVerificationRequest.getEmail());
         log.info("인증 코드 전송");
     }
 
     @PostMapping("/verify-code")
-    @Operation(summary = "인증 코드 검증", description = "이메일로 받은 인증 코드를 검증하는 API", tags = {"회원가입"})
     public void verifyCode(
         @Valid @RequestBody UserVerifyCodeRequest verifyCodeRequest) {
         emailService.verifyEmailCode(verifyCodeRequest.getEmail(), verifyCodeRequest.getCode());
     }
 
-
     @PostMapping
-    @Operation(summary = "회원가입", description = "회원가입을 위한 API", tags = {"회원가입"})
     public ResponseEntity<Void> signUp(@Valid @RequestBody UserSignUpRequest signUpRequest,
         HttpServletResponse response) {
-
-        log.info("Sign-up request received: {}", signUpRequest);
 
         userService.validateSignUpRequest(signUpRequest);
         emailService.isEmailVerified(signUpRequest.getEmail());
@@ -90,7 +82,6 @@ public class UserController {
     }
 
     @GetMapping
-    @Operation(summary = "회원 조회", description = "회원 조회 위한 API")
     public ResponseEntity<UserInfoResponse> getUser() {
         User user = userUtils.getCurrentUser();
         UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
@@ -106,7 +97,6 @@ public class UserController {
 
 
     @PatchMapping
-    @Operation(summary = "회원 정보 변경", description = "회원 정보 변경 API")
     public ResponseEntity<UserInfoResponse> updateUserInfo(
         @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         User user = userUtils.getCurrentUser();
@@ -116,14 +106,12 @@ public class UserController {
     }
 
     @DeleteMapping
-    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 API")
     public void deleteUser() {
         User user = userUtils.getCurrentUser();
         userService.withdraw(user);
     }
 
     @PostMapping("/change-password")
-    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API", tags = {"비밀번호 변경"})
     public ResponseEntity<UserInfoResponse> changePassword(
         @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
 
