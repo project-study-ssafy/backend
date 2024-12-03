@@ -15,7 +15,6 @@ public interface UserService {
 
     void validateSignUpRequest(UserSignUpRequest signUpRequest);
 
-    UserInfoVo getUserInfo(String email);
 
     User getUser(String email);
 

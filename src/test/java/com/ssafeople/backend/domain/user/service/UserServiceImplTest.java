@@ -106,7 +106,8 @@ class UserServiceImplTest {
         userRepository.save(user);
 
         // When: 사용자를 조회하면
-        UserInfoVo userInfo = userService.getUserInfo("test@example.com");
+        User testUser = userService.getUser("test@example.com");
+        UserInfoVo userInfo = testUser.getUserInfo();
 
         // Then: 저장된 유저가 저장된 정보와 일치하는지 확인
         assertThat(userInfo.getNickname()).isEqualTo("nickname");
@@ -123,7 +124,7 @@ class UserServiceImplTest {
 
         // When & Then 존재하지 않는 이메일르 조회하면 예외가 발생
         assertThrows(UserNotFoundException.class,
-            () -> userService.getUserInfo("test2@example.com"));
+            () -> userService.getUser("test2@example.com"));
     }
 
     @Test
