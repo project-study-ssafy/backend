@@ -5,6 +5,7 @@ import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangeReadmeRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.EmailVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
@@ -102,7 +103,7 @@ public class UserController {
         User user = userUtils.getCurrentUser();
         userService.updateProcess(user, userUpdateRequest);
         UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
-        return ResponseEntity.ok(userInfoResponse );
+        return ResponseEntity.ok(userInfoResponse);
     }
 
     @DeleteMapping
@@ -117,7 +118,8 @@ public class UserController {
 
         emailService.isEmailVerified(changePasswordRequest.getEmail());
         User user = userUtils.getCurrentUser();
-        UserInfoVo userinfoVo = userService.changePassword(user, changePasswordRequest);
+        userService.changePassword(user, changePasswordRequest);
+        UserInfoVo userinfoVo = user.getUserInfo();
         UserInfoResponse userInfoResponse = new UserInfoResponse(userinfoVo);
 
         return ResponseEntity.ok(userInfoResponse);
@@ -130,6 +132,17 @@ public class UserController {
         userService.validateEmailAndUsername(changePasswordVerificationRequest);
         emailService.sendVerificationCodeChangePassword(
             changePasswordVerificationRequest.getEmail());
+    }
+
+    @PostMapping("/readme")
+    public ResponseEntity<UserInfoResponse> updateReadme(
+        @RequestBody ChangeReadmeRequest changeReadmeRequest) {
+        User user = userUtils.getCurrentUser();
+        userService.changeReadme(user, changeReadmeRequest.getReadme());
+
+        UserInfoVo userInfo = user.getUserInfo();
+        UserInfoResponse userInfoResponse = new UserInfoResponse(userInfo);
+        return ResponseEntity.ok(userInfoResponse);
     }
 
 }
