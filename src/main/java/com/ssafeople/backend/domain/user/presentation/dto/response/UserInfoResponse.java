@@ -13,7 +13,7 @@ public class UserInfoResponse {
     private String email;
     private String nickname;
     private String role;
-    private String markdown;
+    private String readme;
     private String biography;
 
     public UserInfoResponse(UserInfoVo userInfoVo) {
@@ -22,7 +22,7 @@ public class UserInfoResponse {
         this.email = userInfoVo.getEmail();
         this.nickname = userInfoVo.getNickname();
         this.role = userInfoVo.getRole();
-        this.markdown = userInfoVo.getMarkdown();
+        this.readme = userInfoVo.getReadme();
         this.biography = userInfoVo.getBiography();
     }
 

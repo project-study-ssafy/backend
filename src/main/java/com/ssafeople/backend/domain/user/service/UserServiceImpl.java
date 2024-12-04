@@ -2,7 +2,6 @@ package com.ssafeople.backend.domain.user.service;
 
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
-import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
@@ -102,14 +101,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoVo changePassword(User user, ChangePasswordRequest changePasswordRequest) {
+    public void changePassword(User user, ChangePasswordRequest changePasswordRequest) {
         String passwordHash = passwordEncoder.encode(changePasswordRequest.getPassword());
         user.changePassword(passwordHash);
-        return user.getUserInfo();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserById(Short userId) {
         return userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
     }
+
+    @Override
+    public void changeReadme(User user, String readme) {
+        user.changeReadme(readme);
+    }
+
 }

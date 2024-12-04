@@ -11,6 +11,6 @@ public class UserInfoVo {
     private final String email;
     private final String nickname;
     private final String role;
-    private final String markdown;
+    private final String readme;
     private final String biography;
 }

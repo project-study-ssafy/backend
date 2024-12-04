@@ -54,7 +54,7 @@ public class User {
     private final List<Post> posts = new ArrayList<>();
 
     @Lob
-    private String markdown;
+    private String readme;
 
     private String biography;
 
@@ -83,7 +83,7 @@ public class User {
             .nickname(nickname)
             .email(email)
             .role(role.getValue())
-            .markdown(markdown)
+            .readme(readme)
             .biography(biography)
             .build();
     }
@@ -96,6 +96,10 @@ public class User {
 
     public void changePassword(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public void changeReadme(String readme) {
+        this.readme = readme;
     }
 }
 
