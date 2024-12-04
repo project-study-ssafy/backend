@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBoardId(Short boardId);
+    Post findPostByPostId(Long postId);
+    void updatePost(Post post);
 }

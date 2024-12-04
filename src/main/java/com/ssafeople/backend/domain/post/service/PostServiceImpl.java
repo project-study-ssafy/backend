@@ -5,10 +5,12 @@ import com.ssafeople.backend.domain.board.service.BoardService;
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 
+import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
+import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,5 +61,16 @@ public class PostServiceImpl implements PostService {
         Post post = new Post(request.getTitle(), request.getContent(), user, board);
 
         postRepository.save(post);
+    }
+
+    @Override
+    public void updatePost(PostUpdateRequest request, User user) {
+
+        Post post = postRepository.findPostByPostId(request.getPostId());
+
+        if (!(post.getUser().getId().equals(user.getId()))) {
+           throw PostOwnerIsNotCurrentUserException.EXCEPTION;
+        }
+        postRepository.updatePost(post);
     }
 }
