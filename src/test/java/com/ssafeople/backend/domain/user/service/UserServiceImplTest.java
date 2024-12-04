@@ -278,4 +278,20 @@ class UserServiceImplTest {
 
     }
 
+    @Test
+    @DisplayName("사용자 readme 변경 기능")
+    void change_readme() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        userRepository.save(user);
+
+        // when: readme 를 변경하면
+        userService.changeReadme(user, "나의 README");
+
+
+        // then: readme가 변경된다.
+        assertThat(user.getReadme()).isEqualTo("나의 README");
+    }
+
 }
