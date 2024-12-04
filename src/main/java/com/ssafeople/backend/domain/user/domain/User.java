@@ -97,5 +97,9 @@ public class User {
     public void changePassword(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+
+    public void changeReadme(String readme) {
+        this.readme = readme;
+    }
 }
 

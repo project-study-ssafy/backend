@@ -1,7 +1,6 @@
 package com.ssafeople.backend.domain.user.service;
 
 import com.ssafeople.backend.domain.user.domain.User;
-import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
@@ -23,7 +22,9 @@ public interface UserService {
 
     void validateEmailAndUsername(ChangePasswordVerificationRequest changePasswordVerificationRequest);
 
-    UserInfoVo changePassword(User user, ChangePasswordRequest changePasswordRequest);
+    void changePassword(User user, ChangePasswordRequest changePasswordRequest);
 
     User getUserById(Short userId);
+
+    void changeReadme(User user, String readme);
 }
