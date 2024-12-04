@@ -106,7 +106,8 @@ class UserServiceImplTest {
         userRepository.save(user);
 
         // When: 사용자를 조회하면
-        UserInfoVo userInfo = userService.getUserInfo("test@example.com");
+        User testUser = userService.getUser("test@example.com");
+        UserInfoVo userInfo = testUser.getUserInfo();
 
         // Then: 저장된 유저가 저장된 정보와 일치하는지 확인
         assertThat(userInfo.getNickname()).isEqualTo("nickname");
@@ -123,7 +124,7 @@ class UserServiceImplTest {
 
         // When & Then 존재하지 않는 이메일르 조회하면 예외가 발생
         assertThrows(UserNotFoundException.class,
-            () -> userService.getUserInfo("test2@example.com"));
+            () -> userService.getUser("test2@example.com"));
     }
 
     @Test
@@ -242,10 +243,55 @@ class UserServiceImplTest {
         ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
         changePasswordRequest.setEmail(user.getEmail());
         changePasswordRequest.setPassword("newPasswordHash");
-        userService.changePassword(changePasswordRequest);
+        userService.changePassword(user, changePasswordRequest);
 
         // then: 변경이 됨
         assertThat(user.getPasswordHash()).isNotEqualTo("passwordHash");
+    }
+
+    @Test
+    @DisplayName("id로 사용자 조회 성공")
+    void findById_Success() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        User savedUser = userRepository.save(user);
+
+        // when: 사용자 Id로 조회
+        User findUser = userService.getUserById(savedUser.getId());
+
+        // then: 두 사용자가 일치함
+        assertThat(findUser.getId()).isEqualTo(savedUser.getId());
+    }
+
+    @Test
+    @DisplayName("id로 사용자 조회 실패")
+    void findById_Fail() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        User savedUser = userRepository.save(user);
+
+        // when & then: id가 없으면 예외 발생
+        Short notMatchId = (short) (savedUser.getId() + 1);
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(notMatchId));
+
+    }
+
+    @Test
+    @DisplayName("사용자 readme 변경 기능")
+    void change_readme() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        userRepository.save(user);
+
+        // when: readme 를 변경하면
+        userService.changeReadme(user, "나의 README");
+
+
+        // then: readme가 변경된다.
+        assertThat(user.getReadme()).isEqualTo("나의 README");
     }
 
 }

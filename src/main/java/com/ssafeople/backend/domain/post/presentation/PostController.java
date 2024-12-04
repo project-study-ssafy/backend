@@ -5,7 +5,7 @@ import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteReque
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.post.service.PostService;
 import com.ssafeople.backend.domain.user.domain.User;
-import com.ssafeople.backend.global.util.CurrentUserUtilImpl;
+import com.ssafeople.backend.global.utils.user.UserUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.*;
 public class PostController {
 
     private final PostService postService;
-    private final CurrentUserUtilImpl currentUserUtil;
+    private final UserUtils userUtils;
 
     @GetMapping
     public ResponseEntity<List<PostSummaryResponse>> getPostsByBoard(@PathVariable(name="boardId") Short boardId) {
@@ -33,7 +33,7 @@ public class PostController {
             @PathVariable(name="boardId") Short boardId,
             @Valid @RequestBody PostWriteRequest request
     ) {
-        User user = currentUserUtil.getCurrentUser();
+        User user = userUtils.getCurrentUser();
         postService.writePost(request, boardId, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
