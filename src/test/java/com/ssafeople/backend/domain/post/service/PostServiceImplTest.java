@@ -4,6 +4,7 @@ import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
+import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -95,5 +97,29 @@ public class PostServiceImplTest {
         Post post = new Post(postWriteRequest.getTitle(), postWriteRequest.getContent(), testUser, testBoard);
         //When & Then
         assertThat(postRepository.save(post) == post).isTrue();
+    }
+
+    @Test
+    @DisplayName("게시글 수정 성공")
+    void updatePost_success() {
+
+        //given
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        Post post = new Post("TT", "TC", testUser, testBoard);
+
+        postRepository.save(post);
+
+        PostUpdateRequest postUpdateRequest = new PostUpdateRequest();
+        postUpdateRequest.setTitle("Update title");
+        postUpdateRequest.setContent("Update content");
+        postUpdateRequest.setPostId(post.getId());
+        postUpdateRequest.setUser(testUser);
+        postUpdateRequest.setBoardId(testBoard.getId());
+
+        //when
+        postService.updatePost(postUpdateRequest, testUser);
+        assertEquals("Update title", post.getTitle());
+        assertEquals("Update content", post.getContent());
     }
 }
