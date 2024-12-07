@@ -10,6 +10,7 @@ import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryRe
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
+import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,21 +106,49 @@ public class PostServiceImplTest {
 
         //given
         Board testBoard = new Board("TEST", "TEST BOARD");
-        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
-        Post post = new Post("TT", "TC", testUser, testBoard);
+        boardRepository.save(testBoard);
 
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        userRepository.save(testUser);
+
+        Post post = new Post("TT", "TC", testUser, testBoard);
         postRepository.save(post);
 
         PostUpdateRequest postUpdateRequest = new PostUpdateRequest();
         postUpdateRequest.setTitle("Update title");
         postUpdateRequest.setContent("Update content");
-        postUpdateRequest.setPostId(post.getId());
-        postUpdateRequest.setUser(testUser);
-        postUpdateRequest.setBoardId(testBoard.getId());
 
         //when
-        postService.updatePost(postUpdateRequest, testUser);
+        postService.updatePost(postUpdateRequest, post.getId(), testUser);
+
+        //then
         assertEquals("Update title", post.getTitle());
         assertEquals("Update content", post.getContent());
+    }
+
+    @Test
+    @DisplayName("게시글 수정 실패: 현재 사용자와 게시글 소유주가 다르면 예외를 반환한다")
+    void updatePost_fail() {
+        //given
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        boardRepository.save(testBoard);
+
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        User testUser1 = new User("testUserName1", "test123@test.test1", "", "TestUserNickName1");
+        userRepository.save(testUser);
+        userRepository.save(testUser1);
+
+
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        PostUpdateRequest postUpdateRequest = new PostUpdateRequest();
+        postUpdateRequest.setTitle("Update title");
+        postUpdateRequest.setContent("Update content");
+
+        //when & then
+        assertThrows(PostOwnerIsNotCurrentUserException.class, () ->
+                postService.updatePost(postUpdateRequest, post.getId(), testUser1)
+        );
     }
 }
