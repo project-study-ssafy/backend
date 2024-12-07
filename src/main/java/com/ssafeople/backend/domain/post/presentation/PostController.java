@@ -38,13 +38,13 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PatchMapping
+    @PatchMapping("/{postId}")
     public ResponseEntity<Void> updatePost(
         @PathVariable(name = "postId") Long postId,
         @Valid @RequestBody PostUpdateRequest request
     ) {
-        User user = currentUserUtil.getCurrentUser();
-        postService.updatePost(request, user);
+        User user = userUtils.getCurrentUser();
+        postService.updatePost(request, postId, user);
         return ResponseEntity.ok().build();
     }
 }
