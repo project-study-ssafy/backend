@@ -57,20 +57,19 @@ public class PostServiceImpl implements PostService {
     public void writePost(PostWriteRequest request, Short boardId, User user) {
 
         Board board = boardService.getBoardById(boardId);
-
         Post post = new Post(request.getTitle(), request.getContent(), user, board);
-
         postRepository.save(post);
     }
 
     @Override
-    public void updatePost(PostUpdateRequest request, User user) {
+    public void updatePost(PostUpdateRequest request, Long postId, User user) {
 
-        Post post = postRepository.findPostByPostId(request.getPostId());
+        Post post = postRepository.findPostById(postId);
 
-        if (!(post.getUser().getId().equals(user.getId()))) {
+        if (!(post.getUser().equals(user))) {
            throw PostOwnerIsNotCurrentUserException.EXCEPTION;
         }
-        postRepository.updatePost(post);
+
+        post.update(request.getTitle(), request.getContent());
     }
 }
