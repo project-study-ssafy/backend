@@ -26,7 +26,7 @@ public enum ErrorCode {
     INVALID_BOARD_ID(404, "유효하지 않은 게시판 접근"),
     EMPTY_BOARD_LIST(400, "게시판 목록이 존재하지 않음"),
 
-    INVALID_POST_ID(404, "현재 접근하려는 게시판이 존재하지 않습니다."),
+    INVALID_POST_ID(404, "현재 접근하려는 게시글이 존재하지 않습니다."),
     EMPTY_POST_LIST(400, "게시글 목록이 존재하지 않음"),
 
     OWNER_NOTEQUAL_NOW(403, "해당 게시글에 대한 권한이 없습니다.");
