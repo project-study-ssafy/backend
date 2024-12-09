@@ -1,11 +1,12 @@
 package com.ssafeople.backend.domain.post.domain.repository;
 
 import com.ssafeople.backend.domain.post.domain.Post;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBoardId(Short boardId);
-    Post findPostById(Long postId);
+    Optional<Post> findPostById(Long postId);
 }
