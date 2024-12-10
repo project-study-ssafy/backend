@@ -4,11 +4,13 @@ import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
+import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
+import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -95,5 +98,57 @@ public class PostServiceImplTest {
         Post post = new Post(postWriteRequest.getTitle(), postWriteRequest.getContent(), testUser, testBoard);
         //When & Then
         assertThat(postRepository.save(post) == post).isTrue();
+    }
+
+    @Test
+    @DisplayName("게시글 수정 성공")
+    void updatePost_success() {
+
+        //given
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        boardRepository.save(testBoard);
+
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        userRepository.save(testUser);
+
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        PostUpdateRequest postUpdateRequest = new PostUpdateRequest();
+        postUpdateRequest.setTitle("Update title");
+        postUpdateRequest.setContent("Update content");
+
+        //when
+        postService.updatePost(postUpdateRequest, post.getId(), testUser);
+
+        //then
+        assertEquals("Update title", post.getTitle());
+        assertEquals("Update content", post.getContent());
+    }
+
+    @Test
+    @DisplayName("게시글 수정 실패: 현재 사용자와 게시글 소유주가 다르면 예외를 반환한다")
+    void updatePost_fail() {
+        //given
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        boardRepository.save(testBoard);
+
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        User testUser1 = new User("testUserName1", "test123@test.test1", "", "TestUserNickName1");
+        userRepository.save(testUser);
+        userRepository.save(testUser1);
+
+
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        PostUpdateRequest postUpdateRequest = new PostUpdateRequest();
+        postUpdateRequest.setTitle("Update title");
+        postUpdateRequest.setContent("Update content");
+
+        //when & then
+        assertThrows(PostOwnerIsNotCurrentUserException.class, () ->
+                postService.updatePost(postUpdateRequest, post.getId(), testUser1)
+        );
     }
 }

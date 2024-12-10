@@ -1,5 +1,6 @@
 package com.ssafeople.backend.domain.post.presentation;
 
+import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.post.service.PostService;
@@ -35,5 +36,15 @@ public class PostController {
         User user = userUtils.getCurrentUser();
         postService.writePost(request, boardId, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PatchMapping("/{postId}")
+    public ResponseEntity<Void> updatePost(
+        @PathVariable(name = "postId") Long postId,
+        @Valid @RequestBody PostUpdateRequest request
+    ) {
+        User user = userUtils.getCurrentUser();
+        postService.updatePost(request, postId, user);
+        return ResponseEntity.ok().build();
     }
 }
