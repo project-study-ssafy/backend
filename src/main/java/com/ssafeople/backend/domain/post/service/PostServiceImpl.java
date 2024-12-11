@@ -58,7 +58,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public PostDetailResponse getPostById(Long postId) {
-        Post post = postRepository.findPostById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+        Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
         return PostDetailResponse
                 .builder()
                 .id(post.getId())
@@ -81,7 +81,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void updatePost(PostUpdateRequest request, Long postId, User user) {
 
-        Post post = postRepository.findPostById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+        Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
 
         if (!(post.getUser().equals(user))) {
            throw PostOwnerIsNotCurrentUserException.EXCEPTION;
@@ -92,7 +92,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long postId, User user) {
-        Post post = postRepository.findPostById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+        Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
 
         if (!(post.getUser().equals(user))) {
             throw PostOwnerIsNotCurrentUserException.EXCEPTION;
