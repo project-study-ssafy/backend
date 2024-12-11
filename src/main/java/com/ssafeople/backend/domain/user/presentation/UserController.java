@@ -117,7 +117,7 @@ public class UserController {
         @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
 
         emailService.isEmailVerified(changePasswordRequest.getEmail());
-        User user = userUtils.getCurrentUser();
+        User user = userService.getUser(changePasswordRequest.getEmail());
         userService.changePassword(user, changePasswordRequest);
         UserInfoVo userinfoVo = user.getUserInfo();
         UserInfoResponse userInfoResponse = new UserInfoResponse(userinfoVo);
