@@ -6,6 +6,7 @@ import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
@@ -82,6 +83,28 @@ public class PostServiceImplTest {
         postRepository.save(post);
         //When & Then
         assertThrows(PostListEmptyException.class, () -> postService.getPostsByBoardId(testBoard.getId()));
+    }
+
+    @Test
+    @DisplayName("게시글 상세 조회 성공")
+    void getPostById_success() {
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        boardRepository.save(testBoard);
+
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        userRepository.save(testUser);
+
+        Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser, testBoard);
+        postRepository.save(post);
+
+        PostDetailResponse response = postService.getPostById(post.getId());
+        assertThat(response.getId()).isEqualTo(post.getId());
+    }
+
+    @Test
+    @DisplayName("게시글 상세 조회 실패 (존재하지 않는 게시글 접근) 예외를 발생시킨다.")
+    void getPostById_fail() {
+        assertThrows(PostNotExistException.class, () -> postService.getPostById(999L));
     }
 
     @Test
