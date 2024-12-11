@@ -46,7 +46,7 @@ public class PostServiceImpl implements PostService {
                     PostSummaryResponse.builder()
                             .id(post.getId())
                             .title(post.getTitle())
-                            .userName(post.getUser().getUsername())
+                            .nickName(post.getUser().getNickname())
                             .createdAt(post.getCreatedAt())
                             .build();
             responses.add(response);
@@ -66,7 +66,7 @@ public class PostServiceImpl implements PostService {
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
                 .userId(post.getUser().getId())
-                .userName(post.getUser().getUsername())
+                .nickName(post.getUser().getNickname())
                 .build();
     }
 

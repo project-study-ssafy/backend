@@ -14,5 +14,5 @@ public class PostDetailResponse {
     private final LocalDateTime createdAt;
 
     private final Short userId;
-    private final String userName;
+    private final String nickName;
 }

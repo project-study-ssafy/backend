@@ -52,20 +52,13 @@ public class PostServiceImplTest {
         userRepository.save(testUser);
         Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser, testBoard);
         postRepository.save(post);
-        PostSummaryResponse response =
-                PostSummaryResponse.builder()
-                        .id(post.getId())
-                        .title(post.getTitle())
-                        .userName(post.getUser().getUsername())
-                        .createdAt(post.getCreatedAt())
-                        .build();
 
         //When
         List<PostSummaryResponse> posts = postService.getPostsByBoardId(testBoard.getId());
 
         //Then
         assertThat(posts.size()).isEqualTo(1);
-        assertThat(posts.get(0).getId()).isEqualTo(response.getId());
+        assertThat(posts.get(0).getId()).isEqualTo(post.getId());
 
     }
 
