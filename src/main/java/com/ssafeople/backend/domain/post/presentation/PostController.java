@@ -2,6 +2,7 @@ package com.ssafeople.backend.domain.post.presentation;
 
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.post.service.PostService;
 import com.ssafeople.backend.domain.user.domain.User;
@@ -26,6 +27,12 @@ public class PostController {
     public ResponseEntity<List<PostSummaryResponse>> getPostsByBoard(@PathVariable(name="boardId") Short boardId) {
         List<PostSummaryResponse> posts = postService.getPostsByBoardId(boardId);
         return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDetailResponse> getPost(@PathVariable(name="postId") Long postId) {
+        PostDetailResponse response = postService.getPostById(postId);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
