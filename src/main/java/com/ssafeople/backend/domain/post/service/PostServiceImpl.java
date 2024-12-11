@@ -73,4 +73,15 @@ public class PostServiceImpl implements PostService {
 
         post.update(request.getTitle(), request.getContent());
     }
+
+    @Override
+    public void deletePost(Long postId, User user) {
+        Post post = postRepository.findPostById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+
+        if (!(post.getUser().equals(user))) {
+            throw PostOwnerIsNotCurrentUserException.EXCEPTION;
+        }
+
+        postRepository.delete(post);
+    }
 }

@@ -10,6 +10,7 @@ import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryRe
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
+import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -150,5 +150,52 @@ public class PostServiceImplTest {
         assertThrows(PostOwnerIsNotCurrentUserException.class, () ->
                 postService.updatePost(postUpdateRequest, post.getId(), testUser1)
         );
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 성공")
+    void deletePost_success() {
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        boardRepository.save(testBoard);
+
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        userRepository.save(testUser);
+
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        postService.deletePost(post.getId(), testUser);
+
+        assertFalse(postRepository.findById(post.getId()).isPresent());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패 (권한 없음) 예외 반환")
+    void deletePost_fail() {
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        boardRepository.save(testBoard);
+
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        User testUser1 = new User("testUserName1", "test123@test.test1", "", "TestUser1NickName");
+        userRepository.save(testUser);
+        userRepository.save(testUser1);
+
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        assertThrows(PostOwnerIsNotCurrentUserException.class, () -> postService.deletePost(post.getId(), testUser1));
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패 (존재하지 않는 게시글) 예외 반환")
+    void deletePost_fail2() {
+        Board testBoard = new Board("TEST", "TEST BOARD");
+        boardRepository.save(testBoard);
+        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        userRepository.save(testUser);
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        assertThrows(PostNotExistException.class, () -> postService.deletePost(post.getId()+1, testUser));
     }
 }
