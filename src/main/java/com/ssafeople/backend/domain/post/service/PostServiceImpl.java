@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PostDetailResponse getPostById(Long postId) {
         Post post = postRepository.findPostById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
-        PostDetailResponse response = PostDetailResponse
+        return PostDetailResponse
                 .builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -68,7 +68,6 @@ public class PostServiceImpl implements PostService {
                 .userId(post.getUser().getId())
                 .userName(post.getUser().getUsername())
                 .build();
-        return response;
     }
 
     @Override
