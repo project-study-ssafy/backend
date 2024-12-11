@@ -7,6 +7,7 @@ import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
@@ -45,13 +46,28 @@ public class PostServiceImpl implements PostService {
                     PostSummaryResponse.builder()
                             .id(post.getId())
                             .title(post.getTitle())
-                            .userName(post.getUser().getUsername())
+                            .nickName(post.getUser().getNickname())
                             .createdAt(post.getCreatedAt())
                             .build();
             responses.add(response);
         }
 
         return responses;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PostDetailResponse getPostById(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+        return PostDetailResponse
+                .builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .createdAt(post.getCreatedAt())
+                .userId(post.getUser().getId())
+                .nickName(post.getUser().getNickname())
+                .build();
     }
 
     @Override
@@ -65,7 +81,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void updatePost(PostUpdateRequest request, Long postId, User user) {
 
-        Post post = postRepository.findPostById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+        Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
 
         if (!(post.getUser().equals(user))) {
            throw PostOwnerIsNotCurrentUserException.EXCEPTION;
@@ -76,7 +92,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long postId, User user) {
-        Post post = postRepository.findPostById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+        Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
 
         if (!(post.getUser().equals(user))) {
             throw PostOwnerIsNotCurrentUserException.EXCEPTION;
