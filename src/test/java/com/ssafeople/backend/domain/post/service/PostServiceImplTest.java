@@ -22,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -166,6 +165,8 @@ public class PostServiceImplTest {
         postRepository.save(post);
 
         postService.deletePost(post.getId(), testUser);
+
+        assertFalse(postRepository.findById(post.getId()).isPresent());
     }
 
     @Test
