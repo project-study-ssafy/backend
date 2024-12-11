@@ -7,6 +7,7 @@ import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
@@ -52,6 +53,22 @@ public class PostServiceImpl implements PostService {
         }
 
         return responses;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PostDetailResponse getPostById(Long postId) {
+        Post post = postRepository.findPostById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+        PostDetailResponse response = PostDetailResponse
+                .builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .createdAt(post.getCreatedAt())
+                .userId(post.getUser().getId())
+                .userName(post.getUser().getUsername())
+                .build();
+        return response;
     }
 
     @Override
