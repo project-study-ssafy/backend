@@ -103,17 +103,17 @@ public class PostServiceImplTest {
     @DisplayName("게시글 작성 성공")
     void writePost_success() {
         //Given
-        Post post = new Post("TT", "TC", testUser, testBoard);
-        postRepository.save(post);
-
         PostWriteRequest postWriteRequest = new PostWriteRequest();
 
-        postWriteRequest.setTitle("Test post title");
-        postWriteRequest.setContent("Test post content");
+        String TestTitle = "Test post title";
+        String TestContent = "Test post content";
+        postWriteRequest.setTitle(TestTitle);
+        postWriteRequest.setContent(TestContent);
 
-        Post post1 = new Post(postWriteRequest.getTitle(), postWriteRequest.getContent(), testUser, testBoard);
+        postService.writePost(postWriteRequest, testBoard.getId(), testUser);
         //When & Then
-        assertThat(postRepository.save(post1) == post1).isTrue();
+        assertThat(postRepository.findAll().get(0).getTitle().equals(TestTitle)).isTrue();
+        assertThat(postRepository.findAll().get(0).getContent().equals(TestContent)).isTrue();
     }
 
     @Test
