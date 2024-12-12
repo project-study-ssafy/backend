@@ -15,4 +15,8 @@ public class PostDetailResponse {
 
     private final Short userId;
     private final String nickName;
+
+    private final Short likeCount;
+    private final Short commentCount;
+    private final Short viewCount;
 }

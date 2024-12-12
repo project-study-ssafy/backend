@@ -9,6 +9,7 @@ import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.utils.user.UserUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,27 @@ public class PostController {
     private final UserUtils userUtils;
 
     @GetMapping
-    public ResponseEntity<List<PostSummaryResponse>> getPostsByBoard(@PathVariable(name="boardId") Short boardId) {
+    public ResponseEntity<Page<PostSummaryResponse>> getPagedPostsByBoardId(
+            @PathVariable(name="boardId") Short boardId,
+            @RequestParam(required = false, defaultValue = "1", value = "page") int pageNumber,
+            @RequestParam(required = false, defaultValue = "15", value = "size") int pageSize
+    ) {
+        Page<PostSummaryResponse> pagedPosts = postService.getPagedPostsByBoardId(boardId, pageNumber, pageSize);
+        return ResponseEntity.ok(pagedPosts);
+    }
+
+    @GetMapping("/allPosts")
+    public ResponseEntity<List<PostSummaryResponse>> getAllPostsByBoardId(
+            @PathVariable(name="boardId") Short boardId
+    ) {
         List<PostSummaryResponse> posts = postService.getPostsByBoardId(boardId);
         return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDetailResponse> getPost(@PathVariable(name="postId") Long postId) {
+    public ResponseEntity<PostDetailResponse> getPost(
+            @PathVariable(name="postId") Long postId
+    ) {
         PostDetailResponse response = postService.getPostById(postId);
         return ResponseEntity.ok(response);
     }

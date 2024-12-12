@@ -15,6 +15,10 @@ import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,11 +52,40 @@ public class PostServiceImpl implements PostService {
                             .title(post.getTitle())
                             .nickName(post.getUser().getNickname())
                             .createdAt(post.getCreatedAt())
+                            .commentCount(post.getCommentCount())
+                            .likeCount(post.getLikesCount())
+                            .viewCount(post.getViewCount())
                             .build();
             responses.add(response);
         }
 
         return responses;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PostSummaryResponse> getPagedPostsByBoardId(Short boardId, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<Post> postPage = postRepository.findByBoardId(boardId, pageable);
+
+        if (postPage.isEmpty()) {
+            throw PostListEmptyException.EXCEPTION;
+        }
+
+        List<PostSummaryResponse> responses = postPage.getContent().stream()
+                .map(post -> PostSummaryResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .nickName(post.getUser().getNickname())
+                        .createdAt(post.getCreatedAt())
+                        .commentCount(post.getCommentCount())
+                        .likeCount(post.getLikesCount())
+                        .viewCount(post.getViewCount())
+                        .build())
+                .toList();
+
+        return new PageImpl<>(responses, pageable, postPage.getTotalElements());
     }
 
     @Override
@@ -67,6 +100,9 @@ public class PostServiceImpl implements PostService {
                 .createdAt(post.getCreatedAt())
                 .userId(post.getUser().getId())
                 .nickName(post.getUser().getNickname())
+                .commentCount(post.getCommentCount())
+                .viewCount(post.getViewCount())
+                .likeCount(post.getLikesCount())
                 .build();
     }
 

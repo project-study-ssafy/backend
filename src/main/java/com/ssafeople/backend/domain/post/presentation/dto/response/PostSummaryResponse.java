@@ -12,4 +12,8 @@ public class PostSummaryResponse {
     private final String nickName;
     private final String title;
     private final LocalDateTime createdAt;
+
+    private final Short likeCount;
+    private final Short commentCount;
+    private final Short viewCount;
 }
