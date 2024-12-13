@@ -13,6 +13,7 @@ import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.global.exception.comment.CommentListEmptyException;
 import com.ssafeople.backend.global.exception.comment.CommentNotExistException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
+import com.ssafeople.backend.global.exception.user.CommentOwnerIsNotCurrentUserException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -130,5 +131,14 @@ public class CommentServiceImplTest {
     @DisplayName("댓글 삭제 실패 (존재하지 않는 Comment 삭제) 예외를 반환한다.")
     void deleteComment_fail() {
         assertThrows(CommentNotExistException.class, () -> commentService.deleteComment(testUser, 999L));
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 (소유권이 없는 User가 삭제 요청) 예외를 반환한다.")
+    void deleteComment_fail2() {
+        Comment comment = new Comment("Test Content", testPost, testUser);
+        commentRepository.save(comment);
+
+        assertThrows(CommentOwnerIsNotCurrentUserException.class, () -> commentService.deleteComment(testUser1, comment.getId()));
     }
 }
