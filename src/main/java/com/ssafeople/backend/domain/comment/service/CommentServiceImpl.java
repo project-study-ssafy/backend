@@ -22,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CommentResponse> getCommentListByPostId(Short boardId, Long postId, int page, int size) {
+    public Page<CommentResponse> getCommentListByPostId(Long postId, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<Comment> commentPage = commentRepository.findByPostId(postId, pageable);
