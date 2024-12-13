@@ -4,12 +4,14 @@ import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
 import com.ssafeople.backend.domain.comment.domain.Comment;
 import com.ssafeople.backend.domain.comment.domain.repository.CommentRepository;
+import com.ssafeople.backend.domain.comment.presentation.dto.request.CommentWriteRequest;
 import com.ssafeople.backend.domain.comment.presentation.dto.response.CommentResponse;
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.global.exception.comment.CommentListEmptyException;
+import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,5 +87,28 @@ public class CommentServiceImplTest {
     void getCommentListByPostId_fail() {
         //When & Then
         assertThrows(CommentListEmptyException.class, () -> commentService.getCommentListByPostId(testPost.getId(), 999, 10));
+    }
+
+    @Test
+    @DisplayName("댓글 작성 성공")
+    void writeComment_success() {
+        CommentWriteRequest commentWriteRequest = new CommentWriteRequest();
+        commentWriteRequest.setContent("Test Content");
+        commentService.writeComment(commentWriteRequest, testUser, testPost.getId());
+
+        Page<CommentResponse> responses = commentService.getCommentListByPostId(testPost.getId(), 1, 10);
+        assertThat(responses.get().toList().get(0).getContent()).isEqualTo(commentWriteRequest.getContent());
+    }
+
+    @Test
+    @DisplayName("댓글 작성 실패 (존재하지 않는 Post에 작성) 예외를 반환한다.")
+    void writeComment_fail() {
+        CommentWriteRequest commentWriteRequest = new CommentWriteRequest();
+        commentWriteRequest.setContent("Test Content");
+
+        Long p = postRepository.findAll().get(0).getId();
+        postRepository.deleteAll();
+
+        assertThrows(PostNotExistException.class, () -> commentService.writeComment(commentWriteRequest, testUser, p));
     }
 }
