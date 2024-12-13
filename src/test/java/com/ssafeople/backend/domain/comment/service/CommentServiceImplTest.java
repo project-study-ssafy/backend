@@ -123,7 +123,7 @@ public class CommentServiceImplTest {
         commentService.deleteComment(testUser, comment.getId());
 
         Comment c = commentRepository.findById(id).orElse(null);
-        assertTrue(c == null);
+        assertNull(c);
     }
 
     @Test
