@@ -73,7 +73,7 @@ public class CommentServiceImplTest {
         commentRepository.save(comment);
 
         //When
-        Page<CommentResponse> commentList = commentService.getCommentListByPostId(testBoard.getId(), testPost.getId(), 1, 10);
+        Page<CommentResponse> commentList = commentService.getCommentListByPostId(testPost.getId(), 1, 10);
 
         //Then
         assertThat(commentList.get().toList().get(0).getContent()).isEqualTo(comment.getContent());
@@ -84,6 +84,6 @@ public class CommentServiceImplTest {
     @Transactional(readOnly = true)
     void getCommentListByPostId_fail() {
         //When & Then
-        assertThrows(CommentListEmptyException.class, () -> commentService.getCommentListByPostId(testBoard.getId(), testPost.getId(), 999, 10));
+        assertThrows(CommentListEmptyException.class, () -> commentService.getCommentListByPostId(testPost.getId(), 999, 10));
     }
 }

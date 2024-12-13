@@ -16,12 +16,11 @@ public class CommentController {
 
     @GetMapping
     public ResponseEntity<Page<CommentResponse>> getPageCommentsList(
-            @PathVariable Short boardId,
             @PathVariable Long postId,
             @RequestParam(required = false, defaultValue = "1", value = "page") int page,
             @RequestParam(required = false, defaultValue = "10", value = "size") int size
     ) {
-        Page<CommentResponse> pagedComments = commentService.getCommentListByPostId(boardId, postId, page, size);
+        Page<CommentResponse> pagedComments = commentService.getCommentListByPostId(postId, page, size);
         return ResponseEntity.ok(pagedComments);
     }
 }
