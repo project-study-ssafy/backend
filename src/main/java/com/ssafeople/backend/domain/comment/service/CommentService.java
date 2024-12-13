@@ -8,4 +8,5 @@ import org.springframework.data.domain.Page;
 public interface CommentService {
     Page<CommentResponse> getCommentListByPostId(Long postId, int page, int size);
     void writeComment(CommentWriteRequest request, User user, Long postId);
+    void deleteComment(User user, Long commentId);
 }

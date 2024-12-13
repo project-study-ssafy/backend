@@ -8,7 +8,9 @@ import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.comment.CommentListEmptyException;
+import com.ssafeople.backend.global.exception.comment.CommentNotExistException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
+import com.ssafeople.backend.global.exception.user.CommentOwnerIsNotCurrentUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -55,5 +57,15 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
         Comment comment = new Comment(request.getContent(), post, user);
         commentRepository.save(comment);
+    }
+
+    public void deleteComment(User user, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> CommentNotExistException.EXCEPTION);
+
+        if (comment.getUser() != user) {
+            throw CommentOwnerIsNotCurrentUserException.EXCEPTION;
+        }
+
+        commentRepository.deleteById(commentId);
     }
 }
