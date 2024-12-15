@@ -24,7 +24,7 @@ public class ChattingServiceImpl implements ChattingService {
     private final ChattingRoomRepository chattingRoomRepository;
 
     @Override
-    public List<ChattingResponse> sendMessage(Short roomId, String content, User user, String sessionId) {
+    public ChattingResponse sendMessage(Short roomId, String content, User user, String sessionId) {
         ChattingRoom chattingRoom = chattingRoomRepository.findById(roomId)
             .orElseThrow(() -> NotExistChattingRoomException.EXCEPTION);
 
@@ -50,7 +50,12 @@ public class ChattingServiceImpl implements ChattingService {
         chattingMessageRepository.save(chattingMessage);
         chattingRoom.addMessage(chattingMessage);
 
-        return getChattingResponses(chattingRoom);
+        return ChattingResponse.builder()
+            .sessionId(chattingMessage.getSessionId())
+            .nickname(chattingMessage.getNickname())
+            .content(chattingMessage.getContent())
+            .createdAt(chattingMessage.getCreatedAt())
+            .build();
     }
 
     @Transactional(readOnly = true)

@@ -5,7 +5,6 @@ import com.ssafeople.backend.domain.chatting.presentation.dto.response.ChattingR
 import com.ssafeople.backend.domain.chatting.service.ChattingService;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.utils.user.UserUtils;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -37,9 +36,9 @@ public class ChattingController {
             user = userUtils.getCurrentUser();
         }
 
-        List<ChattingResponse> responses = chattingService.sendMessage(
+        ChattingResponse response = chattingService.sendMessage(
             roomId, chatMessageDto.getContent(), user, simpSessionId);
 
-        template.convertAndSend("/sub/chat/room/" + roomId, responses);
+        template.convertAndSend("/sub/chat/room/" + roomId, response);
     }
 }
