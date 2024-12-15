@@ -10,7 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import lombok.Getter;
 
@@ -26,8 +26,16 @@ public class ChattingRoom extends BaseEntity {
     private String roomName;
 
     @OneToMany(mappedBy = "chattingRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChattingMessage> messages = new ArrayList<>();
+    private List<ChattingMessage> messages = new LinkedList<>();
 
     private Boolean isAnonymous;
 
+    public void addMessage(ChattingMessage chattingMessage) {
+
+        this.messages.add(chattingMessage);
+
+        if (messages.size() > 20) {
+            messages.remove(0);
+        }
+    }
 }
