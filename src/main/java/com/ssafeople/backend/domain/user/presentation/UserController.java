@@ -83,27 +83,23 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserInfoResponse> getUser() {
+    public UserInfoResponse getUser() {
         User user = userUtils.getCurrentUser();
-        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
-        return ResponseEntity.ok(userInfoResponse);
+        return new UserInfoResponse(user.getUserInfo());
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserInfoResponse> getUser(@PathVariable Short userId) {
+    public UserInfoResponse getUser(@PathVariable Short userId) {
         User user = userService.getUserById(userId);
-        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
-        return ResponseEntity.ok(userInfoResponse);
+        return new UserInfoResponse(user.getUserInfo());
     }
 
-
     @PatchMapping
-    public ResponseEntity<UserInfoResponse> updateUserInfo(
+    public UserInfoResponse updateUserInfo(
         @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         User user = userUtils.getCurrentUser();
         userService.updateProcess(user, userUpdateRequest);
-        UserInfoResponse userInfoResponse = new UserInfoResponse(user.getUserInfo());
-        return ResponseEntity.ok(userInfoResponse);
+        return new UserInfoResponse(user.getUserInfo());
     }
 
     @DeleteMapping
@@ -113,16 +109,14 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<UserInfoResponse> changePassword(
+    public UserInfoResponse changePassword(
         @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
 
         emailService.isEmailVerified(changePasswordRequest.getEmail());
         User user = userService.getUser(changePasswordRequest.getEmail());
         userService.changePassword(user, changePasswordRequest);
         UserInfoVo userinfoVo = user.getUserInfo();
-        UserInfoResponse userInfoResponse = new UserInfoResponse(userinfoVo);
-
-        return ResponseEntity.ok(userInfoResponse);
+        return new UserInfoResponse(userinfoVo);
     }
 
     @PostMapping("/send-verification-code-change-password")
@@ -135,14 +129,12 @@ public class UserController {
     }
 
     @PostMapping("/readme")
-    public ResponseEntity<UserInfoResponse> updateReadme(
+    public UserInfoResponse updateReadme(
         @RequestBody ChangeReadmeRequest changeReadmeRequest) {
         User user = userUtils.getCurrentUser();
         userService.changeReadme(user, changeReadmeRequest.getReadme());
 
         UserInfoVo userInfo = user.getUserInfo();
-        UserInfoResponse userInfoResponse = new UserInfoResponse(userInfo);
-        return ResponseEntity.ok(userInfoResponse);
+        return new UserInfoResponse(userInfo);
     }
-
 }
