@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @Slf4j
 @NonNullApi
-@RestControllerAdvice(basePackages = "com.ssafeople.backend")
+@RestControllerAdvice
 public class SuccessResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
