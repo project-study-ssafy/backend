@@ -79,4 +79,8 @@ public class Post {
         this.content = content;
         this.updatedAt = LocalDateTime.now();
     }
+
+    private final Short viewCount = (short) 0;
+    private final Short commentCount = (short) 0;
+    private final Short likesCount = (short) 0;
 }

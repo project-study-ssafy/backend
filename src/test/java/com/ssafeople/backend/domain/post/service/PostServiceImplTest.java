@@ -6,11 +6,14 @@ import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.repository.UserRepository;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
+import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -41,30 +43,34 @@ public class PostServiceImplTest {
     @Autowired
     private UserRepository userRepository;
 
+    Board testBoard, testBoard1;
+    User testUser, testUser1;
+
+    @BeforeEach
+    void setUp() {
+        testBoard = new Board("TEST", "TEST BOARD");
+        testBoard1 = new Board("TEST1", "TEST BOARD 1");
+        boardRepository.save(testBoard);
+        boardRepository.save(testBoard1);
+
+        testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
+        testUser1 = new User("testUserName1", "test123@test.test1", "", "TestUser1NickName");
+        userRepository.save(testUser);
+        userRepository.save(testUser1);
+    }
+
     @Test
     @DisplayName("게시글 목록 반환 성공")
     void getPostsByBoardId_success() {
         //Given
-        Board testBoard = new Board("TEST", "TEST BOARD");
-        boardRepository.save(testBoard);
-        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
-        userRepository.save(testUser);
-        Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser, testBoard);
+        Post post = new Post("TT", "TC", testUser, testBoard);
         postRepository.save(post);
-        PostSummaryResponse response =
-                PostSummaryResponse.builder()
-                        .id(post.getId())
-                        .title(post.getTitle())
-                        .userName(post.getUser().getUsername())
-                        .createdAt(post.getCreatedAt())
-                        .build();
-
         //When
         List<PostSummaryResponse> posts = postService.getPostsByBoardId(testBoard.getId());
 
         //Then
         assertThat(posts.size()).isEqualTo(1);
-        assertThat(posts.get(0).getId()).isEqualTo(response.getId());
+        assertThat(posts.get(0).getId()).isEqualTo(post.getId());
 
     }
 
@@ -72,45 +78,48 @@ public class PostServiceImplTest {
     @DisplayName("게시글 목록을 반환하는데 실패하면 예외를 발생시킨다.")
     void getPostsByBoardId_fail() {
         //Given
-        Board testBoard = new Board("TEST", "TEST BOARD");
-        Board testBoard1 = new Board("TEST1", "TEST BOARD 1");
-        boardRepository.save(testBoard);
-        boardRepository.save(testBoard1);
-        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
-        userRepository.save(testUser);
-        Post post = new Post("테스트 게시물 제목", "테스트 게시물 내용", testUser, testBoard1);
-        postRepository.save(post);
+
         //When & Then
         assertThrows(PostListEmptyException.class, () -> postService.getPostsByBoardId(testBoard.getId()));
+    }
+
+    @Test
+    @DisplayName("게시글 상세 조회 성공")
+    void getPostById_success() {
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        PostDetailResponse response = postService.getPostById(post.getId());
+        assertThat(response.getId()).isEqualTo(post.getId());
+    }
+
+    @Test
+    @DisplayName("게시글 상세 조회 실패 (존재하지 않는 게시글 접근) 예외를 발생시킨다.")
+    void getPostById_fail() {
+        assertThrows(PostNotExistException.class, () -> postService.getPostById(999L));
     }
 
     @Test
     @DisplayName("게시글 작성 성공")
     void writePost_success() {
         //Given
-        Board testBoard = new Board("TEST", "TEST BOARD");
-        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
         PostWriteRequest postWriteRequest = new PostWriteRequest();
 
-        postWriteRequest.setTitle("Test post title");
-        postWriteRequest.setContent("Test post content");
+        String TestTitle = "Test post title";
+        String TestContent = "Test post content";
+        postWriteRequest.setTitle(TestTitle);
+        postWriteRequest.setContent(TestContent);
 
-        Post post = new Post(postWriteRequest.getTitle(), postWriteRequest.getContent(), testUser, testBoard);
+        postService.writePost(postWriteRequest, testBoard.getId(), testUser);
         //When & Then
-        assertThat(postRepository.save(post) == post).isTrue();
+        assertThat(postRepository.findAll().get(0).getTitle().equals(TestTitle)).isTrue();
+        assertThat(postRepository.findAll().get(0).getContent().equals(TestContent)).isTrue();
     }
 
     @Test
     @DisplayName("게시글 수정 성공")
     void updatePost_success() {
-
         //given
-        Board testBoard = new Board("TEST", "TEST BOARD");
-        boardRepository.save(testBoard);
-
-        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
-        userRepository.save(testUser);
-
         Post post = new Post("TT", "TC", testUser, testBoard);
         postRepository.save(post);
 
@@ -130,15 +139,6 @@ public class PostServiceImplTest {
     @DisplayName("게시글 수정 실패: 현재 사용자와 게시글 소유주가 다르면 예외를 반환한다")
     void updatePost_fail() {
         //given
-        Board testBoard = new Board("TEST", "TEST BOARD");
-        boardRepository.save(testBoard);
-
-        User testUser = new User("testUserName", "test123@test.test", "", "TestUserNickName");
-        User testUser1 = new User("testUserName1", "test123@test.test1", "", "TestUserNickName1");
-        userRepository.save(testUser);
-        userRepository.save(testUser1);
-
-
         Post post = new Post("TT", "TC", testUser, testBoard);
         postRepository.save(post);
 
@@ -150,5 +150,34 @@ public class PostServiceImplTest {
         assertThrows(PostOwnerIsNotCurrentUserException.class, () ->
                 postService.updatePost(postUpdateRequest, post.getId(), testUser1)
         );
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 성공")
+    void deletePost_success() {
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        postService.deletePost(post.getId(), testUser);
+
+        assertFalse(postRepository.findById(post.getId()).isPresent());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패 (권한 없음) 예외 반환")
+    void deletePost_fail() {
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        assertThrows(PostOwnerIsNotCurrentUserException.class, () -> postService.deletePost(post.getId(), testUser1));
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패 (존재하지 않는 게시글) 예외 반환")
+    void deletePost_fail2() {
+        Post post = new Post("TT", "TC", testUser, testBoard);
+        postRepository.save(post);
+
+        assertThrows(PostNotExistException.class, () -> postService.deletePost(post.getId()+1, testUser));
     }
 }

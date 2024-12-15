@@ -7,11 +7,14 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class PostSummaryResponse {
+public class PostDetailResponse {
     private final Long id;
-    private final String nickName;
     private final String title;
+    private final String content;
     private final LocalDateTime createdAt;
+
+    private final Short userId;
+    private final String nickName;
 
     private final Short likeCount;
     private final Short commentCount;
