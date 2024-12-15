@@ -53,6 +53,17 @@ public class ChattingServiceImpl implements ChattingService {
         return getChattingResponses(chattingRoom);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<ChattingResponse> getChattingRoomsMessages(Short roomId, User user) {
+        ChattingRoom chattingRoom = chattingRoomRepository.findById(roomId)
+            .orElseThrow(() -> NotExistChattingRoomException.EXCEPTION);
+
+        if (!chattingRoom.getIsAnonymous() && user == null) {
+            throw UserNotLoggedInException.EXCEPTION;
+        }
+        return getChattingResponses(chattingRoom);
+    }
 
     private List<ChattingResponse> getChattingResponses(ChattingRoom chattingRoom) {
         List<ChattingResponse> responses = new ArrayList<>();
