@@ -21,15 +21,15 @@ public class CommentController {
     private final UserUtils userUtils;
 
     @GetMapping
-    public ResponseEntity<Page<CommentResponse>> getPageCommentsList(
+    public Page<CommentResponse> getPageCommentsList(
             @PathVariable Long postId,
             @RequestParam(required = false, defaultValue = "1", value = "page") int page,
             @RequestParam(required = false, defaultValue = "10", value = "size") int size
     ) {
-        Page<CommentResponse> pagedComments = commentService.getCommentListByPostId(postId, page, size);
-        return ResponseEntity.ok(pagedComments);
+        return commentService.getCommentListByPostId(postId, page, size);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity<CommentResponse> writeComment(
             @PathVariable Long postId,
@@ -41,11 +41,10 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(
+    public void deleteComment(
             @PathVariable Long commentId
     ) {
         User user = userUtils.getCurrentUser();
         commentService.deleteComment(user, commentId);
-        return ResponseEntity.noContent().build();
     }
 }
