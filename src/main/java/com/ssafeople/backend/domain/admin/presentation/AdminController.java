@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,5 +94,12 @@ public class AdminController {
         return "admin/users/users"; // Thymeleaf 템플릿 이름
     }
 
+    @AdminOnly
+    @GetMapping("/users/{userId}")
+    public String user(@PathVariable Short userId, Model model) {
+        User userById = userService.getUserById(userId);
+        model.addAttribute("user", userById);
+        return "admin/users/user";
+    }
 
 }
