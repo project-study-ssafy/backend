@@ -3,6 +3,7 @@ package com.ssafeople.backend.domain.admin.presentation;
 import com.ssafeople.backend.domain.admin.service.AdminService;
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.service.BoardService;
+import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.post.service.PostService;
@@ -39,6 +40,7 @@ public class AdminController {
     private final BoardService boardService;
     private final UserService userService;
     private final PostService postService;
+    private final PostRepository postRepository;
 
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("redirectUrl") String redirectUrl) {
@@ -152,5 +154,12 @@ public class AdminController {
         PostDetailResponse post = postService.getPostById(postId);
         model.addAttribute("post", post);
         return "admin/posts/post";
+    }
+
+    @AdminOnly
+    @PostMapping("/posts/delete/{postId}")
+    public String deletePost(@PathVariable Long postId) {
+        postRepository.deleteById(postId);
+        return "redirect:/admin/home";
     }
 }
