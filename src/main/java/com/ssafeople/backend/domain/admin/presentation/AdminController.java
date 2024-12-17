@@ -3,6 +3,7 @@ package com.ssafeople.backend.domain.admin.presentation;
 import com.ssafeople.backend.domain.admin.service.AdminService;
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.service.BoardService;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.post.service.PostService;
 import com.ssafeople.backend.domain.user.domain.User;
@@ -143,5 +144,13 @@ public class AdminController {
         model.addAttribute("posts", pagedPosts);
         model.addAttribute("boardId", boardId);
         return "admin/posts/posts";
+    }
+
+    @AdminOnly
+    @GetMapping("/posts/{postId}")
+    public String post(@PathVariable Long postId, Model model) {
+        PostDetailResponse post = postService.getPostById(postId);
+        model.addAttribute("post", post);
+        return "admin/posts/post";
     }
 }
