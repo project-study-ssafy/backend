@@ -117,4 +117,11 @@ public class AdminController {
         model.addAttribute("boards", boards);
         return "admin/boards/boardForm";
     }
+
+    @AdminOnly
+    @PostMapping("/boards/create")
+    public String createBoard(@RequestParam String boardName, @RequestParam String description) {
+        boardService.writeBoard(boardName, description);
+        return "redirect:/admin/boards";
+    }
 }
