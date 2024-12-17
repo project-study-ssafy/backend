@@ -1,15 +1,22 @@
 package com.ssafeople.backend.domain.admin.presentation;
 
 import com.ssafeople.backend.domain.admin.service.AdminService;
+import com.ssafeople.backend.domain.board.domain.Board;
+import com.ssafeople.backend.domain.board.service.BoardService;
+import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
+import com.ssafeople.backend.domain.post.service.PostService;
 import com.ssafeople.backend.domain.user.domain.User;
+import com.ssafeople.backend.domain.user.service.UserService;
+import com.ssafeople.backend.global.annotation.AdminOnly;
 import com.ssafeople.backend.global.exception.admin.AdminLoginFailedException;
 import com.ssafeople.backend.global.exception.admin.NotAdminException;
 import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +31,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminController {
 
     private final AdminService adminService;
+    private final BoardService boardService;
+    private final UserService userService;
+    private final PostService postService;
 
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("redirectUrl") String redirectUrl) {
@@ -54,4 +64,20 @@ public class AdminController {
         return "redirect:/admin/home";
     }
 
+    @AdminOnly
+    @GetMapping("/home")
+    public String adminHome(Model model) {
+
+        Long postCount = postService.getCount();
+        Long userCount = userService.getCount();
+
+        model.addAttribute("postCount", postCount);
+        model.addAttribute("userCount", userCount);
+
+        List<Board> boards = boardService.getAllBoards();
+
+        model.addAttribute("boards", boards);
+
+        return "admin/home";
+    }
 }
