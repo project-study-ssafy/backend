@@ -162,4 +162,12 @@ public class AdminController {
         postRepository.deleteById(postId);
         return "redirect:/admin/home";
     }
+
+    @AdminOnly
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/admin/home";
+    }
+
 }
