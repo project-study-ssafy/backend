@@ -109,4 +109,12 @@ public class AdminController {
         userService.withdraw(user);
         return "redirect:/admin/users";
     }
+
+    @AdminOnly
+    @GetMapping("/boards")
+    public String boards(Model model) {
+        List<Board> boards = boardService.getAllBoards();
+        model.addAttribute("boards", boards);
+        return "admin/boards/boardForm";
+    }
 }
