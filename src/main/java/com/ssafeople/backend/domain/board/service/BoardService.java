@@ -11,4 +11,5 @@ public interface BoardService {
 
     void writeBoard(String boardName, String description);
 
+    void deleteBoard(Short boardId);
 }
