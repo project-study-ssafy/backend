@@ -33,10 +33,8 @@ public class PostController {
     }
 
     @GetMapping("/allPosts")
-    public List<PostSummaryResponse> getAllPostsByBoardId(
-            @PathVariable(name="boardId") Short boardId
-    ) {
-        return postService.getPostsByBoardId(boardId);
+    public List<PostSummaryResponse> getAllPostsByBoardId() {
+        return postService.getPostsRegardlessBoardId();
     }
 
     @GetMapping("/{postId}")
