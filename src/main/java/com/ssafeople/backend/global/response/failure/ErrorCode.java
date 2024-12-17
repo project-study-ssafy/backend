@@ -36,7 +36,9 @@ public enum ErrorCode {
     INVALID_COMMENT_ID(404, "유효하지 않은 댓글입니다."),
     OWNER_NOW_NOTEQUAL(403, "해당 댓글에 대한 권한이 없습니다."),
 
-    ADMIN_LOGIN_FAILED(400, "비밀번호가 일치하지 않습니다.");
+    ADMIN_LOGIN_FAILED(400, "비밀번호가 일치하지 않습니다."),
+
+    NOT_ADMIN(400, "관리자 계정이 아닙니다.");
 
     private final int status;
     private final String reason;
