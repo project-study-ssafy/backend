@@ -3,6 +3,7 @@ package com.ssafeople.backend.domain.admin.presentation;
 import com.ssafeople.backend.domain.admin.service.AdminService;
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.service.BoardService;
+import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.post.service.PostService;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.service.UserService;
@@ -130,5 +131,17 @@ public class AdminController {
     public String deleteBoard(@PathVariable Short boardId) {
         boardService.deleteBoard(boardId);
         return "redirect:/admin/boards";
+    }
+
+    @AdminOnly
+    @GetMapping("/boards/{boardId}")
+    public String board(@PathVariable Short boardId,
+        @RequestParam(defaultValue = "1") int page,
+        Model model) {
+        Page<PostSummaryResponse> pagedPosts = postService.getPagedPostsByBoardId(boardId, page,
+            20);
+        model.addAttribute("posts", pagedPosts);
+        model.addAttribute("boardId", boardId);
+        return "admin/posts/posts";
     }
 }
