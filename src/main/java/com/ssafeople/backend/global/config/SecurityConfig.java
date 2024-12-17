@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers("/chat").permitAll()
                 .requestMatchers("/api/v1/chat/**").permitAll()
+                .requestMatchers("/admin/login").permitAll()
                 .anyRequest().authenticated())
                 .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
