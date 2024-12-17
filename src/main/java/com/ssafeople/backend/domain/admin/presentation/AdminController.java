@@ -102,4 +102,11 @@ public class AdminController {
         return "admin/users/user";
     }
 
+    @AdminOnly
+    @PostMapping("/users/{userId}/delete")
+    public String delete(@PathVariable Short userId) {
+        User user = userService.getUserById(userId);
+        userService.withdraw(user);
+        return "redirect:/admin/users";
+    }
 }
