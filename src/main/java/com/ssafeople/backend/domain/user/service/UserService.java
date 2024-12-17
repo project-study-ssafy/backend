@@ -27,4 +27,7 @@ public interface UserService {
     User getUserById(Short userId);
 
     void changeReadme(User user, String readme);
+
+    Long getCount();
+
 }

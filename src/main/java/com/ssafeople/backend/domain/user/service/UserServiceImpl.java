@@ -117,4 +117,10 @@ public class UserServiceImpl implements UserService {
         user.changeReadme(readme);
     }
 
+    @Override
+    public Long getCount() {
+        return userRepository.count();
+    }
+
+
 }
