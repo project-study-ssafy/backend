@@ -124,4 +124,11 @@ public class AdminController {
         boardService.writeBoard(boardName, description);
         return "redirect:/admin/boards";
     }
+
+    @AdminOnly
+    @PostMapping("/boards/{boardId}/delete")
+    public String deleteBoard(@PathVariable Short boardId) {
+        boardService.deleteBoard(boardId);
+        return "redirect:/admin/boards";
+    }
 }
