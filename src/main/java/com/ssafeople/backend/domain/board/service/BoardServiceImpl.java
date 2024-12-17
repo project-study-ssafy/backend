@@ -35,5 +35,10 @@ public class BoardServiceImpl implements BoardService {
         return boardRepository.findById(id).orElseThrow(() -> BoardNotInRepositoryException.EXCEPTION);
     }
 
+    @Override
+    public void writeBoard(String boardName, String description) {
+        Board board = new Board(boardName, description);
+        boardRepository.save(board);
+    }
 
 }
