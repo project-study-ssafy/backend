@@ -11,6 +11,8 @@ import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
 import com.ssafeople.backend.global.exception.user.NotMatchEmailAndUsernameException;
 import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,5 +124,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.count();
     }
 
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
 
 }
