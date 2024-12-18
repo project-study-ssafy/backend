@@ -31,13 +31,17 @@ public enum ErrorCode {
 
     OWNER_NOTEQUAL_NOW(403, "해당 게시글에 대한 권한이 없습니다."),
     NOT_EXIST_CHATTING_ROOM(404, "해당 채팅방이 존재하지 않습니다."),
+
     USER_NOT_LOGGED_IN(401, "사용자가 로그인하지 않았습니다."),
     EMPTY_COMMENT_LIST(400, "아직 작성된 댓글이 없습니다."),
+
     INVALID_COMMENT_ID(404, "유효하지 않은 댓글입니다."),
     OWNER_NOW_NOTEQUAL(403, "해당 댓글에 대한 권한이 없습니다."),
 
-    ADMIN_LOGIN_FAILED(400, "비밀번호가 일치하지 않습니다."),
+    INVALID_LIKE(404, "좋아요 취소 중 오류가 발생했습니다."),
+    LIKE_ALREADY_EXIST(422, "좋아요 중 오류가 발생했습니다"),
 
+    ADMIN_LOGIN_FAILED(400, "비밀번호가 일치하지 않습니다."),
     NOT_ADMIN(400, "관리자 계정이 아닙니다.");
 
     private final int status;
