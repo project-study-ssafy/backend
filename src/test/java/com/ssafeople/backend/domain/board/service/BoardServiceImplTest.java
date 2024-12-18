@@ -2,6 +2,7 @@ package com.ssafeople.backend.domain.board.service;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
+import com.ssafeople.backend.domain.board.presentation.dto.response.BoardInfoResponse;
 import com.ssafeople.backend.global.exception.board.BoardListEmptyException;
 import com.ssafeople.backend.global.exception.board.BoardNotInRepositoryException;
 import org.junit.jupiter.api.DisplayName;
@@ -36,10 +37,10 @@ class BoardServiceImplTest {
         boardRepository.save(board1);
         boardRepository.save(board2);
 
-        List<Board> boards = boardService.getAllBoards();
+        List<BoardInfoResponse> boards = boardService.getAllBoards();
 
         assertThat(boards.size()).isEqualTo(2);
-        assertThat(boards).extracting(Board::getBoardName).containsExactlyInAnyOrder("newBoardName1", "newBoardName2");
+        assertThat(boards).extracting(BoardInfoResponse::getBoardName).containsExactlyInAnyOrder("newBoardName1", "newBoardName2");
     }
 
     @Test

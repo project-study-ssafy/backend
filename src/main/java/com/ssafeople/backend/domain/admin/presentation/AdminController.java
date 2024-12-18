@@ -1,7 +1,7 @@
 package com.ssafeople.backend.domain.admin.presentation;
 
 import com.ssafeople.backend.domain.admin.service.AdminService;
-import com.ssafeople.backend.domain.board.domain.Board;
+import com.ssafeople.backend.domain.board.presentation.dto.response.BoardInfoResponse;
 import com.ssafeople.backend.domain.board.service.BoardService;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
@@ -81,7 +81,7 @@ public class AdminController {
         model.addAttribute("postCount", postCount);
         model.addAttribute("userCount", userCount);
 
-        List<Board> boards = boardService.getAllBoards();
+        List<BoardInfoResponse> boards = boardService.getAllBoards();
 
         model.addAttribute("boards", boards);
 
@@ -117,7 +117,7 @@ public class AdminController {
     @AdminOnly
     @GetMapping("/boards")
     public String boards(Model model) {
-        List<Board> boards = boardService.getAllBoards();
+        List<BoardInfoResponse> boards = boardService.getAllBoards();
         model.addAttribute("boards", boards);
         return "admin/boards/boardForm";
     }
