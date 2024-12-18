@@ -10,6 +10,9 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface PostService {
+
+    List<PostSummaryResponse> getPostsRegardlessBoardId();
+
     List<PostSummaryResponse> getPostsByBoardId(Short boardId);
     void writePost(PostWriteRequest request, Short boardId, User user);
     void updatePost(PostUpdateRequest request, Long postId, User user);

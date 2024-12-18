@@ -15,10 +15,7 @@ import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +31,33 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     private final BoardService boardService;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostSummaryResponse> getPostsRegardlessBoardId() {
+        List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+
+        if (posts.isEmpty()) {
+            throw PostListEmptyException.EXCEPTION;
+        }
+
+        List<PostSummaryResponse> responses = new ArrayList<>();
+        for (Post post : posts) {
+            PostSummaryResponse response =
+                    PostSummaryResponse.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .nickName(post.getUser().getNickname())
+                            .createdAt(post.getCreatedAt())
+                            .commentCount(post.getCommentCount())
+                            .likeCount(post.getLikesCount())
+                            .viewCount(post.getViewCount())
+                            .build();
+            responses.add(response);
+        }
+
+        return responses;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -65,7 +89,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public Page<PostSummaryResponse> getPagedPostsByBoardId(Short boardId, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size).withSort(Sort.by(Sort.Direction.DESC, "id"));
 
         Page<Post> postPage = postRepository.findByBoardId(boardId, pageable);
 

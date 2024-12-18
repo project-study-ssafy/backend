@@ -1,5 +1,6 @@
 package com.ssafeople.backend.domain.post.presentation;
 
+import com.ssafeople.backend.domain.like.service.LikeService;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostUpdateRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteRequest;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
@@ -21,6 +22,7 @@ import java.util.*;
 public class PostController {
 
     private final PostService postService;
+    private final LikeService likeService;
     private final UserUtils userUtils;
 
     @GetMapping
@@ -33,10 +35,8 @@ public class PostController {
     }
 
     @GetMapping("/allPosts")
-    public List<PostSummaryResponse> getAllPostsByBoardId(
-            @PathVariable(name="boardId") Short boardId
-    ) {
-        return postService.getPostsByBoardId(boardId);
+    public List<PostSummaryResponse> getAllPostsByBoardId() {
+        return postService.getPostsRegardlessBoardId();
     }
 
     @GetMapping("/{postId}")
@@ -71,5 +71,21 @@ public class PostController {
     ) {
         User user = userUtils.getCurrentUser();
         postService.deletePost(postId, user);
+    }
+
+    @PostMapping("/{postId}/like")
+    public void doLikePost(
+            @PathVariable(name = "postId") Long postId
+    ) {
+        User user = userUtils.getCurrentUser();
+        likeService.doLikePost(user, postId);
+    }
+
+    @PostMapping("/{postId}/unlike")
+    public void doUnLikePost(
+            @PathVariable(name = "postId") Long postId
+    ) {
+        User user = userUtils.getCurrentUser();
+        likeService.undoLikePost(user, postId);
     }
 }
