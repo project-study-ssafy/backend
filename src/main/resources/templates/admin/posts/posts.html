@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .post-list {
+      list-style: none;
+      padding: 0;
+    }
+    .post-item {
+      background-color: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .post-item h3 {
+      margin: 0;
+      font-size: 1.2em;
+    }
+    .post-item .meta {
+      color: #555;
+      font-size: 0.9em;
+      margin: 10px 0;
+    }
+    .post-item .meta span {
+      margin-right: 15px;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .pagination a {
+      padding: 10px 15px;
+      text-decoration: none;
+      border: 1px solid #ddd;
+      margin: 0 5px;
+      border-radius: 4px;
+      color: #007bff;
+    }
+    .pagination a:hover {
+      background-color: #007bff;
+      color: white;
+    }
+    .pagination .active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #0056b3;
+      padding: 15px 0;
+    }
+
+    .menu a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .menu a:hover {
+      color: #ffcc00;
+    }
+
+    .navbar {
+      background-color: #007bff;
+      padding: 10px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <span>관리자 대시보드</span>
+  <a href="/admin/logout">로그아웃</a>
+</div>
+
+<!-- 메뉴 -->
+<div class="menu">
+  <a href="/admin/home">대시보드</a>
+  <a href="/admin/users">사용자 관리</a>
+  <a href="/admin/boards">게시판 관리</a>
+</div>
+
+<div class="container">
+  <h1>게시판</h1>
+
+  <!-- 게시글 목록 -->
+  <ul class="post-list">
+    <li th:each="post : ${posts.content}" class="post-item">
+      <h3><a th:href="@{'/admin/posts/' + ${post.id}}" th:text="${post.title}"></a></h3>
+      <div class="meta">
+        <span><i class="fas fa-user"></i> <span th:text="${post.nickName}"></span></span>
+        <span><i class="fas fa-calendar"></i> <span th:text="${post.createdAt}"></span></span>
+        <span><i class="fas fa-thumbs-up"></i> <span th:text="${post.likeCount}"></span></span>
+        <span><i class="fas fa-comment"></i> <span th:text="${post.commentCount}"></span></span>
+        <span><i class="fas fa-eye"></i> <span th:text="${post.viewCount}"></span></span>
+      </div>
+    </li>
+  </ul>
+
+  <div class="pagination">
+    <ul style="list-style: none; padding: 0; display: flex;">
+      <li th:each="pageNum : ${#numbers.sequence(0, posts.totalPages - 1)}" style="margin-right: 5px;">
+        <a th:href="@{/admin/boards/{boardId}(boardId=${boardId}, page=${pageNum + 1})}"
+           th:text="${pageNum + 1}"
+           th:classappend="${pageNum == posts.number ? 'active' : ''}"
+           style="text-decoration: none; padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; color: #333;">
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+</div>
+
+</body>
+</html>

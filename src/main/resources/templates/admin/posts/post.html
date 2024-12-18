@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>게시글 상세</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .post-container {
+      width: 60%;
+      margin: 10px auto;
+    }
+
+    .post-header {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+    }
+
+    .post-title {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .post-info {
+      color: gray;
+      font-size: 14px;
+    }
+
+    .post-content {
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    .post-stats {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .stats-item {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #0056b3;
+      padding: 15px 0;
+    }
+
+    .menu a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .menu a:hover {
+      color: #ffcc00;
+    }
+
+    .navbar {
+      background-color: #007bff;
+      padding: 10px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- 네비게이션 바 -->
+<div class="navbar">
+  <span>관리자 대시보드</span>
+  <a href="/admin/logout">로그아웃</a>
+</div>
+
+<!-- 메뉴 -->
+<div class="menu">
+  <a href="/admin/home">대시보드</a>
+  <a href="/admin/users">사용자 관리</a>
+  <a href="/admin/boards">게시판 관리</a>
+</div>
+
+<div class="post-container">
+  <!-- 게시글 헤더 -->
+  <div class="post-header">
+    <div class="post-title" th:text="${post.title}">게시글 제목</div>
+    <div class="post-info">
+      작성자: <span th:text="${post.nickName}">작성자 이름</span> |
+      작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}">작성일</span>
+    </div>
+  </div>
+
+  <!-- 게시글 내용 -->
+  <div class="post-content" th:text="${post.content}">
+    게시글 내용이 여기에 표시됩니다.
+  </div>
+
+  <!-- 게시글 통계 -->
+  <div class="post-stats">
+    <div class="stats-item">조회수: <span th:text="${post.viewCount}">0</span></div>
+    <div class="stats-item">좋아요: <span th:text="${post.likeCount}">0</span></div>
+    <div class="stats-item">댓글수: <span th:text="${post.commentCount}">0</span></div>
+  </div>
+
+  <div style="text-align: right; margin-top: 20px;">
+    <form th:action="@{'/admin/posts/delete/' + ${post.id}}" method="post"
+          onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+      <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 14px;">
+        게시글 삭제
+      </button>
+    </form>
+  </div>
+
+</div>
+</body>
+</html>

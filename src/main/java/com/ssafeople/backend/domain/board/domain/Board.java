@@ -1,6 +1,10 @@
 package com.ssafeople.backend.domain.board.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ssafeople.backend.domain.post.domain.Post;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,6 +36,10 @@ public class Board {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<Post> posts = new ArrayList<>();
 
     public Board(String boardName, String description) {
         this.boardName = boardName;
