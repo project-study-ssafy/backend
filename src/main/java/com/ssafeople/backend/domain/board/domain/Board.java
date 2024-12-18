@@ -1,5 +1,6 @@
 package com.ssafeople.backend.domain.board.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafeople.backend.domain.post.domain.Post;
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class Board {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Post> posts = new ArrayList<>();
 
