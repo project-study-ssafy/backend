@@ -8,7 +8,6 @@ import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.like.AlreadyLikedException;
 import com.ssafeople.backend.global.exception.like.LikeNotExistsException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
-import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,32 +19,20 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public void doLikePost(User user, Long postId) {
-        Post post = postRepository.findById(postId).orElse(null);
-
-        if (user == null) {
-            throw UserNotFoundException.EXCEPTION;
-        } else if (post == null) {
-            throw PostNotExistException.EXCEPTION;
-        }
+        Post post = postRepository.findById(postId).orElseThrow(PostNotExistException::new);
 
         Like like = likeRepository.findByUserIdAndPostId(user.getId(), post.getId());
         if (like != null) {
             throw AlreadyLikedException.EXCEPTION;
         }
-        Like newLike = new Like(user, post);
 
+        Like newLike = new Like(user, post);
         likeRepository.save(newLike);
     }
 
     @Override
     public void undoLikePost(User user, Long postId) {
-        Post post = postRepository.findById(postId).orElse(null);
-
-        if (user == null) {
-            throw UserNotFoundException.EXCEPTION;
-        } else if (post == null) {
-            throw PostNotExistException.EXCEPTION;
-        }
+        Post post = postRepository.findById(postId).orElseThrow(PostNotExistException::new);
 
         Like like = likeRepository.findByUserIdAndPostId(user.getId(), post.getId());
         if (like == null) {
