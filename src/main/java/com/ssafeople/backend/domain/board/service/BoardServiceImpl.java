@@ -2,6 +2,7 @@ package com.ssafeople.backend.domain.board.service;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
+import com.ssafeople.backend.domain.board.presentation.dto.response.BoardInfoResponse;
 import com.ssafeople.backend.global.exception.board.BoardListEmptyException;
 import com.ssafeople.backend.global.exception.board.BoardNotInRepositoryException;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -20,14 +22,27 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
 
     @Transactional(readOnly = true)
-    public List<Board> getAllBoards() {
+    public List<BoardInfoResponse> getAllBoards() {
         List<Board> boards = boardRepository.findAll();
 
         if (boards.isEmpty()) {
             throw BoardListEmptyException.EXCEPTION;
         }
 
-        return boards;
+        List<BoardInfoResponse> responses = new ArrayList<>();
+        for (Board board : boards) {
+            BoardInfoResponse response =
+                    BoardInfoResponse.builder()
+                            .boardId(board.getId())
+                            .boardName(board.getBoardName())
+                            .boardDescription(board.getDescription())
+                            .createdAt(board.getCreatedAt())
+                            .updatedAt(board.getUpdatedAt())
+                            .build();
+            responses.add(response);
+        }
+
+        return responses;
     }
 
     @Transactional(readOnly = true)

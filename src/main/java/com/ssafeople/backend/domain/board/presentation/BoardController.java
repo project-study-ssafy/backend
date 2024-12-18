@@ -1,6 +1,7 @@
 package com.ssafeople.backend.domain.board.presentation;
 
 import com.ssafeople.backend.domain.board.domain.Board;
+import com.ssafeople.backend.domain.board.presentation.dto.response.BoardInfoResponse;
 import com.ssafeople.backend.domain.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping
-    public List<Board> getBoardsList() {
+    public List<BoardInfoResponse> getBoardsList() {
         return boardService.getAllBoards();
     }
 
