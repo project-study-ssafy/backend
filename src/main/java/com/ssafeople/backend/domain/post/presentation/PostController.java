@@ -78,7 +78,6 @@ public class PostController {
             @PathVariable(name = "postId") Long postId
     ) {
         User user = userUtils.getCurrentUser();
-
         likeService.doLikePost(user, postId);
     }
 
@@ -87,7 +86,6 @@ public class PostController {
             @PathVariable(name = "postId") Long postId
     ) {
         User user = userUtils.getCurrentUser();
-
         likeService.undoLikePost(user, postId);
     }
 }
