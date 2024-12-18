@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판 관리</title>
+  <style>
+    /* 기본 스타일 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #333;
+    }
+    /* 폼 컨테이너 */
+    .form-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px 20px 10px 20px; /* 위, 좌우, 아래 여백을 조정 */
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    .form-container input, .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+
+    /* 게시판 목록 스타일 */
+    .dashboard {
+      width: 100%;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .board-list {
+      list-style: none;
+      padding: 0;
+    }
+    .board-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .board-list li a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+
+    /* 메뉴 */
+    .menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #0056b3;
+      padding: 15px 0;
+    }
+
+    .menu a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .menu a:hover {
+      color: #ffcc00;
+    }
+
+    /* 네비게이션 바 */
+    .navbar {
+      background-color: #007bff;
+      padding: 10px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+
+    /* Flexbox 레이아웃 설정 */
+    .container {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px auto;
+      width: 90%;
+    }
+    .container > div {
+      width: 48%;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 네비게이션 바 -->
+<div class="navbar">
+  <span>관리자 대시보드</span>
+  <a href="/admin/logout">로그아웃</a>
+</div>
+
+<!-- 메뉴 -->
+<div class="menu">
+  <a href="/admin/home">대시보드</a>
+  <a href="/admin/users">사용자 관리</a>
+  <a href="/admin/boards">게시판 관리</a>
+</div>
+
+<!-- 게시판 등록 폼과 게시판 목록 영역을 반반으로 나누기 -->
+<div class="container">
+  <!-- 게시판 등록 폼 -->
+  <div class="form-container">
+    <form th:action="@{/admin/boards/create}" method="post">
+      <label for="boardName">게시판 이름</label>
+      <input type="text" id="boardName" name="boardName" required="required" placeholder="게시판 이름 입력">
+
+      <label for="description">설명</label>
+      <textarea id="description" name="description" rows="4" required="required" placeholder="게시판 설명 입력"></textarea>
+
+      <button type="submit">등록</button>
+    </form>
+  </div>
+
+  <!-- 게시판 목록 영역 -->
+  <div class="dashboard">
+    <h2 class="section-header">게시판 목록</h2>
+    <ul class="board-list">
+      <li th:each="board : ${boards}">
+        <div>
+          <a th:href="@{'/admin/boards/' + ${board.id}}" th:text="${board.boardName}">게시판 이름</a>
+          <p th:text="${board.description}">게시판 설명</p>
+        </div>
+        <form th:action="@{'/admin/boards/' + ${board.id} + '/delete'}" method="post" onsubmit="return confirm('정말로 이 게시판을 삭제하시겠습니까?');">
+          <button type="submit" class="delete-btn">삭제</button>
+        </form>
+      </li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

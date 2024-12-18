@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사용자 상세 정보</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .user-info {
+      margin-top: 20px;
+    }
+
+    .user-info table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .user-info th, .user-info td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .user-info th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .user-info td {
+      background-color: #f9f9f9;
+    }
+
+    .user-info td strong {
+      font-weight: bold;
+    }
+
+    .readme, .biography {
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+
+    .menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #0056b3;
+      padding: 15px 0;
+    }
+
+    .menu a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .menu a:hover {
+      color: #ffcc00;
+    }
+
+    .navbar {
+      background-color: #007bff;
+      padding: 10px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- 네비게이션 바 -->
+<div class="navbar">
+  <span>관리자 대시보드</span>
+  <a href="/admin/logout">로그아웃</a>
+</div>
+
+<!-- 메뉴 -->
+<div class="menu">
+  <a href="/admin/home">대시보드</a>
+  <a href="/admin/users">사용자 관리</a>
+  <a href="/admin/boards">게시판 관리</a>
+</div>
+
+<div class="container">
+  <h1>사용자 상세 정보</h1>
+
+  <!-- 사용자 정보 출력 -->
+  <div class="user-info">
+    <table>
+      <tr>
+        <th>아이디</th>
+        <td th:text="${user.id}"></td>
+      </tr>
+      <tr>
+        <th>이름</th>
+        <td th:text="${user.username}"></td>
+      </tr>
+      <tr>
+        <th>이메일</th>
+        <td th:text="${user.email}"></td>
+      </tr>
+      <tr>
+        <th>닉네임</th>
+        <td th:text="${user.nickname}"></td>
+      </tr>
+      <tr>
+        <th>역할</th>
+        <td th:text="${user.role}"></td>
+      </tr>
+      <tr>
+        <th>가입일</th>
+        <td th:text="${user.createdAt}"></td>
+      </tr>
+      <tr>
+        <th>수정일</th>
+        <td th:text="${user.updatedAt}"></td>
+      </tr>
+    </table>
+
+    <!-- 읽기글 (Readme) -->
+    <div class="readme">
+      <strong>자기소개:</strong>
+      <p th:text="${user.readme}"></p>
+    </div>
+
+    <!-- 간단한 소개 (Biography) -->
+    <div class="biography">
+      <strong>간단한 소개:</strong>
+      <p th:text="${user.biography}"></p>
+    </div>
+
+    <!-- 회원 탈퇴 버튼 -->
+    <form th:action="@{/admin/users/{userId}/delete(userId=${user.id})}" method="post" onsubmit="return confirm('정말로 이 사용자를 탈퇴시키겠습니까?');">
+      <button type="submit" class="delete-btn">회원 탈퇴</button>
+    </form>
+
+  </div>
+</div>
+
+</body>
+</html>

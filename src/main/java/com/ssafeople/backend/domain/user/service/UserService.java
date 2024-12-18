@@ -5,6 +5,8 @@ import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePassword
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -27,4 +29,8 @@ public interface UserService {
     User getUserById(Short userId);
 
     void changeReadme(User user, String readme);
+
+    Long getCount();
+
+    Page<User> findAll(Pageable pageable);
 }

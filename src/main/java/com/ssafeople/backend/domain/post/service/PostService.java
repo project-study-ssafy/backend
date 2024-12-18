@@ -20,4 +20,6 @@ public interface PostService {
 
     PostDetailResponse getPostById(Long postId);
     Page<PostSummaryResponse> getPagedPostsByBoardId(Short boardId, int page, int size);
+
+    Long getCount();
 }
