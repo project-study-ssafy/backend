@@ -7,6 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChattingRequest {
 
-    private Short roomId;
     private String content;
 }
