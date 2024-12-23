@@ -13,4 +13,5 @@ public class UserInfoVo {
     private final String role;
     private final String readme;
     private final String biography;
+    private final String chattingNickname;
 }

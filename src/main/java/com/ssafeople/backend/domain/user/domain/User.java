@@ -87,6 +87,7 @@ public class User {
             .role(role.getValue())
             .readme(readme)
             .biography(biography)
+            .chattingNickname(chattingNickname)
             .build();
     }
 
