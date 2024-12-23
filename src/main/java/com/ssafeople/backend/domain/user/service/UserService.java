@@ -33,4 +33,6 @@ public interface UserService {
     Long getCount();
 
     Page<User> findAll(Pageable pageable);
+
+    void changeChattingNickname(User user, String nickname);
 }
