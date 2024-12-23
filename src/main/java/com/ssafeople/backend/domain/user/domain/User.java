@@ -58,6 +58,8 @@ public class User {
 
     private String biography;
 
+    private String chattingNickname;
+
     public User(String username, String email, String passwordHash, String nickname) {
         this.username = username;
         this.email = email;
@@ -101,5 +103,10 @@ public class User {
     public void changeReadme(String readme) {
         this.readme = readme;
     }
+
+    public void changeChattingNickname(String chattingNickname) {
+        this.chattingNickname = chattingNickname;
+    }
+
 }
 
