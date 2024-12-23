@@ -85,9 +85,9 @@ public class UserController {
     }
 
     @GetMapping
-    public UserInfoResponse getUser() {
+    public MyInfoResponse getUser() {
         User user = userUtils.getCurrentUser();
-        return new UserInfoResponse(user.getUserInfo());
+        return new MyInfoResponse(user.getUserInfo());
     }
 
     @GetMapping("/{userId}")
@@ -97,11 +97,11 @@ public class UserController {
     }
 
     @PatchMapping
-    public UserInfoResponse updateUserInfo(
+    public MyInfoResponse updateUserInfo(
         @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         User user = userUtils.getCurrentUser();
         userService.updateProcess(user, userUpdateRequest);
-        return new UserInfoResponse(user.getUserInfo());
+        return new MyInfoResponse(user.getUserInfo());
     }
 
     @DeleteMapping
@@ -111,14 +111,14 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public UserInfoResponse changePassword(
+    public MyInfoResponse changePassword(
         @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
 
         emailService.isEmailVerified(changePasswordRequest.getEmail());
         User user = userService.getUser(changePasswordRequest.getEmail());
         userService.changePassword(user, changePasswordRequest);
         UserInfoVo userinfoVo = user.getUserInfo();
-        return new UserInfoResponse(userinfoVo);
+        return new MyInfoResponse(userinfoVo);
     }
 
     @PostMapping("/send-verification-code-change-password")
@@ -131,13 +131,13 @@ public class UserController {
     }
 
     @PostMapping("/readme")
-    public UserInfoResponse updateReadme(
+    public MyInfoResponse updateReadme(
         @RequestBody ChangeReadmeRequest changeReadmeRequest) {
         User user = userUtils.getCurrentUser();
         userService.changeReadme(user, changeReadmeRequest.getReadme());
 
         UserInfoVo userInfo = user.getUserInfo();
-        return new UserInfoResponse(userInfo);
+        return new MyInfoResponse(userInfo);
     }
 
     @PostMapping("/chatting-nickname")
