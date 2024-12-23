@@ -3,6 +3,7 @@ package com.ssafeople.backend.domain.user.presentation;
 import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangeChattingNicknameRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangeReadmeRequest;
@@ -10,6 +11,7 @@ import com.ssafeople.backend.domain.user.presentation.dto.request.EmailVerificat
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserVerifyCodeRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.response.MyInfoResponse;
 import com.ssafeople.backend.domain.user.presentation.dto.response.UserInfoResponse;
 import com.ssafeople.backend.domain.user.service.EmailService;
 import com.ssafeople.backend.domain.user.service.UserService;
@@ -137,4 +139,14 @@ public class UserController {
         UserInfoVo userInfo = user.getUserInfo();
         return new UserInfoResponse(userInfo);
     }
+
+    @PostMapping("/chatting-nickname")
+    public MyInfoResponse updateChattingNickname(
+        @Valid @RequestBody ChangeChattingNicknameRequest changeChattingNicknameRequest) {
+            User user = userUtils.getCurrentUser();
+            userService.changeChattingNickname(user, changeChattingNicknameRequest.getNickname());
+
+            return new MyInfoResponse(user.getUserInfo());
+    }
+
 }
