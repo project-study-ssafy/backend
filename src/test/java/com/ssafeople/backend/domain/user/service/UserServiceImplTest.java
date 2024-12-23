@@ -7,6 +7,7 @@ import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePassword
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
+import com.ssafeople.backend.global.exception.user.DuplicatedChattingNickname;
 import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
 import com.ssafeople.backend.global.exception.user.NotMatchEmailAndUsernameException;
@@ -294,4 +295,48 @@ class UserServiceImplTest {
         assertThat(user.getReadme()).isEqualTo("나의 README");
     }
 
+    @Test
+    @DisplayName("사용자 채팅 닉네임 등록 기능")
+    void chatting_nickname_register() {
+
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        userRepository.save(user);
+
+        // when: 채팅 닉네임을 등록하면
+        userService.changeChattingNickname(user, "채팅 닉네임");
+
+        // then: 등록된다.
+        assertThat(user.getChattingNickname()).isEqualTo("채팅 닉네임");
+    }
+
+    @Test
+    @DisplayName("사용자 채팅 닉네임 변경 성공")
+    void chatting_nickname_update_success() {
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        userRepository.save(user);
+        userService.changeChattingNickname(user, "채팅 닉네임");
+
+        // when: 채팅 닉네임을 변경하면
+        userService.changeChattingNickname(user, "변경 닉네임");
+
+        // then: 등록된다.
+        assertThat(user.getChattingNickname()).isEqualTo("변경 닉네임");
+    }
+
+    @Test
+    @DisplayName("사용자 채팅 닉네임 변경 실패")
+    void chatting_nickname_update_fail() {
+        // given: 사용자가 있을 때
+        User user = new User("username", "test@example.com", "passwordHash", "nickname");
+        userRepository.save(user);
+        userService.changeChattingNickname(user, "채팅 닉네임");
+
+        User user2 = new User("username2", "test2@example.com", "passwordHash2", "nickname2");
+        userRepository.save(user2);
+
+        // when&then: 같은 채팅 닉네임으로 변경하면 예외가 발생한다.
+        assertThrows(DuplicatedChattingNickname.class, () -> userService.changeChattingNickname(user2, "채팅 닉네임"));
+    }
 }
