@@ -79,7 +79,8 @@ public class UserServiceImpl implements UserService {
         }
 
         // 사용자 정보 업데이트
-        user.update(userUpdateRequest.getUsername(), userUpdateRequest.getNickname(), userUpdateRequest.getBiography());
+        user.update(userUpdateRequest.getUsername(), userUpdateRequest.getNickname(),
+            userUpdateRequest.getBiography());
     }
 
     @Override
@@ -133,11 +134,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeChattingNickname(User user, String chattingNickname) {
 
-        user = userRepository.findById(user.getId()).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+        user = userRepository.findById(user.getId())
+            .orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
-        userRepository.findByChattingNickname(chattingNickname).ifPresent(changeUser -> {
-            throw DuplicatedChattingNickname.EXCEPTION;
-        });
+        if (!chattingNickname.equals(user.getChattingNickname())) {
+            userRepository.findByChattingNickname(chattingNickname).ifPresent(changeUser -> {
+                throw DuplicatedChattingNickname.EXCEPTION;
+            });
+        }
         user.changeChattingNickname(chattingNickname);
     }
 
