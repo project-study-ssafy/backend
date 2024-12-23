@@ -15,7 +15,7 @@ public enum ErrorCode {
     EXPIRED_TOKEN(401, "토큰이 만료되었습니다."),
 
     URL_INPUT_ERROR(404, "잘못된 URL 입니다"),
-    USER_NOT_FOUND(404,"사용자가 존재하지 않습니다"),
+    USER_NOT_FOUND(404, "사용자가 존재하지 않습니다"),
     METHOD_NOT_ALLOWED(405, "http 메소드가 잘못되었습니다."),
 
     DUPLICATE_EMAIL(422, "이미 존재하는 이메일입니다."),
@@ -42,7 +42,8 @@ public enum ErrorCode {
     LIKE_ALREADY_EXIST(422, "좋아요 중 오류가 발생했습니다"),
 
     ADMIN_LOGIN_FAILED(400, "비밀번호가 일치하지 않습니다."),
-    NOT_ADMIN(400, "관리자 계정이 아닙니다.");
+    NOT_ADMIN(400, "관리자 계정이 아닙니다."),
+    DUPLICATE_CHATTING_NICKNAME(422, "중복된 채팅 닉네임입니다.");
 
     private final int status;
     private final String reason;
