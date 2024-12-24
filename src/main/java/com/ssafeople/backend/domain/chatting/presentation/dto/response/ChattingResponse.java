@@ -15,7 +15,7 @@ public class ChattingResponse{
 
     private String content;
 
-    private String sessionId;
+    private Short senderId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
