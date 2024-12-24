@@ -8,8 +8,8 @@ import com.ssafeople.backend.domain.chatting.presentation.dto.response.ChattingR
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.chatting.NotExistChattingRoomException;
 import com.ssafeople.backend.global.exception.chatting.UserNotLoggedInException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,25 +24,21 @@ public class ChattingServiceImpl implements ChattingService {
     private final ChattingRoomRepository chattingRoomRepository;
 
     @Override
-    public ChattingResponse sendMessage(Short roomId, String content, User user, String sessionId) {
+    public ChattingResponse sendMessage(Short roomId, String content, User user) {
         ChattingRoom chattingRoom = chattingRoomRepository.findById(roomId)
             .orElseThrow(() -> NotExistChattingRoomException.EXCEPTION);
-
-        if (!chattingRoom.getIsAnonymous() && user == null) {
-            throw UserNotLoggedInException.EXCEPTION;
-        }
 
         String nickname;
 
         if (chattingRoom.getIsAnonymous()) {
-            nickname = "익명";
+            nickname = user.getChattingNickname();
         } else {
             nickname = user.getNickname();
         }
 
         ChattingMessage chattingMessage = ChattingMessage.builder()
-            .sessionId(sessionId)
-            .nickname(nickname)
+            .senderId(user.getId())
+            .nickname(nickname == null ? "익명": nickname)
             .content(content)
             .chattingRoom(chattingRoom)
             .build();
@@ -51,7 +47,7 @@ public class ChattingServiceImpl implements ChattingService {
         chattingRoom.addMessage(chattingMessage);
 
         return ChattingResponse.builder()
-            .sessionId(chattingMessage.getSessionId())
+            .senderId(chattingMessage.getSenderId())
             .nickname(chattingMessage.getNickname())
             .content(chattingMessage.getContent())
             .createdAt(chattingMessage.getCreatedAt())

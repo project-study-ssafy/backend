@@ -5,7 +5,7 @@ import com.ssafeople.backend.domain.user.domain.User;
 import java.util.List;
 
 public interface ChattingService {
-    ChattingResponse sendMessage(Short roomId, String content, User user, String userId);
+    ChattingResponse sendMessage(Short roomId, String content, User user);
 
     List<ChattingResponse> getChattingRoomsMessages(Short roomId, User user);
 }
