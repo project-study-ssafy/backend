@@ -34,14 +34,12 @@ public class StompHandler implements ChannelInterceptor {
             Short roomId = Short.parseShort(substring);
             log.info("destination: {}", destination);
 
-            if (roomId == 2) {
-                try {
-                    User user = userUtils.getCurrentUser();
-                    log.info("User {} subscribed to room {}", user.getId(), roomId);
-                } catch (Exception e) {
-                    log.error("Unauthorized access attempt to room {}", roomId);
-                    throw UserNotLoggedInException.EXCEPTION;
-                }
+            try {
+                User user = userUtils.getCurrentUser();
+                log.info("User {} subscribed to room {}", user.getId(), roomId);
+            } catch (Exception e) {
+                log.error("Unauthorized access attempt to room {}", roomId);
+                throw UserNotLoggedInException.EXCEPTION;
             }
         }
         return ChannelInterceptor.super.preSend(message, channel);
