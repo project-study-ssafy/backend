@@ -67,19 +67,13 @@ public class ChattingServiceImpl implements ChattingService {
     }
 
     private List<ChattingResponse> getChattingResponses(ChattingRoom chattingRoom) {
-        List<ChattingResponse> responses = new ArrayList<>();
-
-        for (ChattingMessage message : chattingRoom.getMessages()) {
-            ChattingResponse response =
-                ChattingResponse.builder()
-                    .nickname(message.getNickname())
-                    .content(message.getContent())
-                    .createdAt(message.getCreatedAt())
-                    .sessionId(message.getSessionId())
-                    .build();
-            responses.add(response);
-        }
-        return responses;
+        return chattingRoom.getMessages().stream()
+            .map(message -> ChattingResponse.builder()
+                .nickname(message.getNickname())
+                .content(message.getContent())
+                .createdAt(message.getCreatedAt())
+                .senderId(message.getSenderId())
+                .build())
+            .collect(Collectors.toList());
     }
-
 }
