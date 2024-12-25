@@ -6,6 +6,7 @@ import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePassword
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
+import com.ssafeople.backend.global.exception.user.DuplicatedChattingNickname;
 import com.ssafeople.backend.global.exception.user.DuplicatedEmailException;
 import com.ssafeople.backend.global.exception.user.DuplicatedNicknameException;
 import com.ssafeople.backend.global.exception.user.NotMatchEmailAndUsernameException;
@@ -78,7 +79,8 @@ public class UserServiceImpl implements UserService {
         }
 
         // 사용자 정보 업데이트
-        user.update(userUpdateRequest.getUsername(), userUpdateRequest.getNickname(), userUpdateRequest.getBiography());
+        user.update(userUpdateRequest.getUsername(), userUpdateRequest.getNickname(),
+            userUpdateRequest.getBiography());
     }
 
     @Override
@@ -127,6 +129,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public void changeChattingNickname(User user, String chattingNickname) {
+
+        user = userRepository.findById(user.getId())
+            .orElseThrow(() -> UserNotFoundException.EXCEPTION);
+
+        if (!chattingNickname.equals(user.getChattingNickname())) {
+            userRepository.findByChattingNickname(chattingNickname).ifPresent(changeUser -> {
+                throw DuplicatedChattingNickname.EXCEPTION;
+            });
+        }
+        user.changeChattingNickname(chattingNickname);
     }
 
 }

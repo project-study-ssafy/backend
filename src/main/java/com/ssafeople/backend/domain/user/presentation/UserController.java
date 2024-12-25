@@ -3,6 +3,7 @@ package com.ssafeople.backend.domain.user.presentation;
 import com.ssafeople.backend.domain.auth.security.JwtUtil;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.domain.user.domain.vo.UserInfoVo;
+import com.ssafeople.backend.domain.user.presentation.dto.request.ChangeChattingNicknameRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangePasswordVerificationRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.ChangeReadmeRequest;
@@ -10,6 +11,7 @@ import com.ssafeople.backend.domain.user.presentation.dto.request.EmailVerificat
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserSignUpRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserUpdateRequest;
 import com.ssafeople.backend.domain.user.presentation.dto.request.UserVerifyCodeRequest;
+import com.ssafeople.backend.domain.user.presentation.dto.response.MyInfoResponse;
 import com.ssafeople.backend.domain.user.presentation.dto.response.UserInfoResponse;
 import com.ssafeople.backend.domain.user.service.EmailService;
 import com.ssafeople.backend.domain.user.service.UserService;
@@ -83,9 +85,9 @@ public class UserController {
     }
 
     @GetMapping
-    public UserInfoResponse getUser() {
+    public MyInfoResponse getUser() {
         User user = userUtils.getCurrentUser();
-        return new UserInfoResponse(user.getUserInfo());
+        return new MyInfoResponse(user.getUserInfo());
     }
 
     @GetMapping("/{userId}")
@@ -95,11 +97,11 @@ public class UserController {
     }
 
     @PatchMapping
-    public UserInfoResponse updateUserInfo(
+    public MyInfoResponse updateUserInfo(
         @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         User user = userUtils.getCurrentUser();
         userService.updateProcess(user, userUpdateRequest);
-        return new UserInfoResponse(user.getUserInfo());
+        return new MyInfoResponse(user.getUserInfo());
     }
 
     @DeleteMapping
@@ -109,14 +111,14 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public UserInfoResponse changePassword(
+    public MyInfoResponse changePassword(
         @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
 
         emailService.isEmailVerified(changePasswordRequest.getEmail());
         User user = userService.getUser(changePasswordRequest.getEmail());
         userService.changePassword(user, changePasswordRequest);
         UserInfoVo userinfoVo = user.getUserInfo();
-        return new UserInfoResponse(userinfoVo);
+        return new MyInfoResponse(userinfoVo);
     }
 
     @PostMapping("/send-verification-code-change-password")
@@ -129,12 +131,22 @@ public class UserController {
     }
 
     @PostMapping("/readme")
-    public UserInfoResponse updateReadme(
+    public MyInfoResponse updateReadme(
         @RequestBody ChangeReadmeRequest changeReadmeRequest) {
         User user = userUtils.getCurrentUser();
         userService.changeReadme(user, changeReadmeRequest.getReadme());
 
         UserInfoVo userInfo = user.getUserInfo();
-        return new UserInfoResponse(userInfo);
+        return new MyInfoResponse(userInfo);
     }
+
+    @PostMapping("/chatting-nickname")
+    public MyInfoResponse updateChattingNickname(
+        @Valid @RequestBody ChangeChattingNicknameRequest changeChattingNicknameRequest) {
+            User user = userUtils.getCurrentUser();
+            userService.changeChattingNickname(user, changeChattingNicknameRequest.getNickname());
+
+            return new MyInfoResponse(user.getUserInfo());
+    }
+
 }

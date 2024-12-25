@@ -32,7 +32,7 @@ public class ChattingMessage extends BaseEntity {
 
     private String content;
 
-    private String sessionId;
+    private Short senderId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatting_room_id")
