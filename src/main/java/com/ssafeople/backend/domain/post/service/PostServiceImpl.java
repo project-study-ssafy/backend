@@ -13,6 +13,7 @@ import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
+import com.ssafeople.backend.global.utils.upload.UploadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,6 +34,8 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     private final BoardService boardService;
+
+    private final UploadUtil uploadUtil;
 
     @Override
     @Transactional(readOnly = true)
@@ -124,6 +129,7 @@ public class PostServiceImpl implements PostService {
                 .createdAt(post.getCreatedAt())
                 .userId(post.getUser().getId())
                 .nickName(post.getUser().getNickname())
+                .imageUrls(post.getImageUrls())
                 .commentCount(post.getCommentCount())
                 .viewCount(post.getViewCount())
                 .likeCount(post.getLikesCount())
@@ -134,8 +140,23 @@ public class PostServiceImpl implements PostService {
     public void writePost(PostWriteRequest request, Short boardId, User user) {
 
         Board board = boardService.getBoardById(boardId);
-        Post post = new Post(request.getTitle(), request.getContent(), user, board);
+
+        List<String> imageUrls = uploadFiles(request.getImages());
+
+        Post post = new Post(request.getTitle(), request.getContent(), user, board, imageUrls);
+
         postRepository.save(post);
+    }
+
+    //Image Files 있을 경우 Upload 위해서 경로 짜는 함수. PostService 내부에서만 사용할 것임
+    public List<String> uploadFiles(List<String> files) {
+        if (files == null || files.isEmpty()) {
+            return List.of();
+        }
+
+        return files.stream()
+                .map(file -> uploadUtil.uploadImage(base64Decoding(file), "imgs/post"))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -147,7 +168,12 @@ public class PostServiceImpl implements PostService {
            throw PostOwnerIsNotCurrentUserException.EXCEPTION;
         }
 
-        post.update(request.getTitle(), request.getContent());
+        List<String> oldImageUrls = post.getImageUrls();
+        deleteFiles(oldImageUrls);
+
+        List<String> newImageUrls = uploadFiles(request.getImages());
+
+        post.update(request.getTitle(), request.getContent(), newImageUrls);
     }
 
     @Override
@@ -158,7 +184,21 @@ public class PostServiceImpl implements PostService {
             throw PostOwnerIsNotCurrentUserException.EXCEPTION;
         }
 
+        deleteFiles(post.getImageUrls());
+
         postRepository.delete(post);
+    }
+
+    public void deleteFiles(List<String> imageUrls) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            return;
+        }
+
+        uploadUtil.deleteImages(imageUrls);
+    }
+
+    public byte[] base64Decoding(String Encoding) {
+        return Base64.getDecoder().decode(Encoding);
     }
 
     @Override
