@@ -1,5 +1,7 @@
 package com.ssafeople.backend.global.utils.upload;
 
+import com.ssafeople.backend.global.exception.upload.DeleteFailedException;
+import com.ssafeople.backend.global.exception.upload.UploadFailedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,7 +39,7 @@ public class UploadUtilImpl implements UploadUtil {
         try {
             s3Client.putObject(request, RequestBody.fromBytes(image));
         } catch (S3Exception e) {
-            throw new RuntimeException("Upload failed", e);
+            throw UploadFailedException.EXCEPTION;
         }
 
         return s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(dirName + "/" + fileName)).toString();
@@ -50,7 +52,7 @@ public class UploadUtilImpl implements UploadUtil {
                     .key(fileKey)
                     .build());
         } catch (S3Exception e) {
-            throw new RuntimeException("Error deleting file from S3: " + fileKey, e);
+            throw DeleteFailedException.EXCEPTION;
         }
     }
 
