@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class UploadUtilImpl implements UploadUtil {
+public class ImageUtilsImpl implements ImageUtils {
 
     private final S3Client s3Client;
 
