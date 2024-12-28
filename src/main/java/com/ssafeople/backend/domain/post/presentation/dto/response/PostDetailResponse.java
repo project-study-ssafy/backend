@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -15,6 +16,7 @@ public class PostDetailResponse {
 
     private final Short userId;
     private final String nickName;
+    private final List<String> imageUrls;
 
     private final Short likeCount;
     private final Short commentCount;
