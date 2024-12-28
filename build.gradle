@@ -52,6 +52,11 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+    //AWS SDK V1 for Java
+    //implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
+
+    //AWS SDK V2 for Java
+    implementation 'software.amazon.awssdk:s3:2.13.0'
 }
 
 tasks.named('test') {
