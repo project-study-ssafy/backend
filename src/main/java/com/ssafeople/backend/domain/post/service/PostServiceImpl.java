@@ -13,7 +13,7 @@ import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
-import com.ssafeople.backend.global.utils.upload.UploadUtil;
+import com.ssafeople.backend.global.utils.upload.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -35,7 +35,7 @@ public class PostServiceImpl implements PostService {
 
     private final BoardService boardService;
 
-    private final UploadUtil uploadUtil;
+    private final ImageUtils imageUtils;
 
     @Override
     @Transactional(readOnly = true)
@@ -149,13 +149,13 @@ public class PostServiceImpl implements PostService {
     }
 
     //Image Files 있을 경우 Upload 위해서 경로 짜는 함수. PostService 내부에서만 사용할 것임
-    public List<String> uploadFiles(List<String> files) {
+    private List<String> uploadFiles(List<String> files) {
         if (files == null || files.isEmpty()) {
             return List.of();
         }
 
         return files.stream()
-                .map(file -> uploadUtil.uploadImage(base64Decoding(file), "imgs/post"))
+                .map(file -> imageUtils.uploadImage(base64Decoding(file), "imgs/post"))
                 .collect(Collectors.toList());
     }
 
@@ -189,15 +189,15 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
-    public void deleteFiles(List<String> imageUrls) {
+    private void deleteFiles(List<String> imageUrls) {
         if (imageUrls == null || imageUrls.isEmpty()) {
             return;
         }
 
-        uploadUtil.deleteImages(imageUrls);
+        imageUtils.deleteImages(imageUrls);
     }
 
-    public byte[] base64Decoding(String Encoding) {
+    private byte[] base64Decoding(String Encoding) {
         return Base64.getDecoder().decode(Encoding);
     }
 
