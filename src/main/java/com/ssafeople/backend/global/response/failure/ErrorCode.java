@@ -29,6 +29,9 @@ public enum ErrorCode {
     INVALID_POST_ID(404, "현재 접근하려는 게시글이 존재하지 않습니다."),
     EMPTY_POST_LIST(400, "게시글 목록이 존재하지 않음"),
 
+    UPLOAD_FAILED(500, "이미지 업로드 실패"),
+    DELETE_FAILED(500, "이미지 삭제 실패"),
+
     OWNER_NOTEQUAL_NOW(403, "해당 게시글에 대한 권한이 없습니다."),
     NOT_EXIST_CHATTING_ROOM(404, "해당 채팅방이 존재하지 않습니다."),
 
