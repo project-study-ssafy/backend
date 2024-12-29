@@ -50,7 +50,7 @@ public class PostController {
     @PostMapping
     public void writePost(
             @PathVariable(name="boardId") Short boardId,
-            @Valid @RequestBody PostWriteRequest request
+            @Valid @ModelAttribute PostWriteRequest request
     ) {
         User user = userUtils.getCurrentUser();
         postService.writePost(request, boardId, user);
@@ -59,7 +59,7 @@ public class PostController {
     @PatchMapping("/{postId}")
     public void updatePost(
         @PathVariable(name = "postId") Long postId,
-        @Valid @RequestBody PostUpdateRequest request
+        @Valid @ModelAttribute PostUpdateRequest request
     ) {
         User user = userUtils.getCurrentUser();
         postService.updatePost(request, postId, user);

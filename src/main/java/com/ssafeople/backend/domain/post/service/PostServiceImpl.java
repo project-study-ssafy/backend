@@ -19,9 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -149,13 +149,13 @@ public class PostServiceImpl implements PostService {
     }
 
     //Image Files 있을 경우 Upload 위해서 경로 짜는 함수. PostService 내부에서만 사용할 것임
-    private List<String> uploadFiles(List<String> files) {
+    private List<String> uploadFiles(List<MultipartFile> files) {
         if (files == null || files.isEmpty()) {
             return List.of();
         }
 
         return files.stream()
-                .map(file -> imageUtils.uploadImage(base64Decoding(file), "imgs/post"))
+                .map(file -> imageUtils.uploadImage(file, "imgs/post"))
                 .collect(Collectors.toList());
     }
 
@@ -195,10 +195,6 @@ public class PostServiceImpl implements PostService {
         }
 
         imageUtils.deleteImages(imageUrls);
-    }
-
-    private byte[] base64Decoding(String Encoding) {
-        return Base64.getDecoder().decode(Encoding);
     }
 
     @Override
