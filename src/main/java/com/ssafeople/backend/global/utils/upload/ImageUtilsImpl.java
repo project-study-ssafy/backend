@@ -6,10 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -25,20 +28,20 @@ public class ImageUtilsImpl implements ImageUtils {
 
     @Override
     @Transactional
-    public String uploadImage(byte[] image, String dirName) {
+    public String uploadImage(MultipartFile image, String dirName) {
         String fileName = UUID.randomUUID() + ".png";
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(dirName + "/" + fileName)
                 .metadata(Map.of(
                         "Content-Type", "image/png",
-                        "Content-Length", String.valueOf(image.length)
+                        "Content-Length", String.valueOf(image.getSize())
                 ))
                 .build();
 
-        try {
-            s3Client.putObject(request, RequestBody.fromBytes(image));
-        } catch (S3Exception e) {
+        try (InputStream inputStream = image.getInputStream()) {
+            s3Client.putObject(request, RequestBody.fromInputStream(inputStream, image.getSize()));
+        } catch (IOException | S3Exception e) {
             throw UploadFailedException.EXCEPTION;
         }
 
