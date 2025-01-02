@@ -33,7 +33,7 @@ public class ChattingServiceImpl implements ChattingService {
         if (chattingRoom.getIsAnonymous()) {
             nickname = user.getChattingNickname();
         } else {
-            nickname = user.getNickname();
+            nickname = user.getUsername();
         }
 
         ChattingMessage chattingMessage = ChattingMessage.builder()
