@@ -13,14 +13,17 @@ import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.post.PostListEmptyException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
+import com.ssafeople.backend.global.utils.upload.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,6 +34,8 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     private final BoardService boardService;
+
+    private final ImageUtils imageUtils;
 
     @Override
     @Transactional(readOnly = true)
@@ -124,6 +129,7 @@ public class PostServiceImpl implements PostService {
                 .createdAt(post.getCreatedAt())
                 .userId(post.getUser().getId())
                 .nickName(post.getUser().getNickname())
+                .imageUrls(post.getImageUrls())
                 .commentCount(post.getCommentCount())
                 .viewCount(post.getViewCount())
                 .likeCount(post.getLikesCount())
@@ -134,8 +140,23 @@ public class PostServiceImpl implements PostService {
     public void writePost(PostWriteRequest request, Short boardId, User user) {
 
         Board board = boardService.getBoardById(boardId);
-        Post post = new Post(request.getTitle(), request.getContent(), user, board);
+
+        List<String> imageUrls = uploadFiles(request.getImages());
+
+        Post post = new Post(request.getTitle(), request.getContent(), user, board, imageUrls);
+
         postRepository.save(post);
+    }
+
+    //Image Files 있을 경우 Upload 위해서 경로 짜는 함수. PostService 내부에서만 사용할 것임
+    private List<String> uploadFiles(List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            return List.of();
+        }
+
+        return files.stream()
+                .map(file -> imageUtils.uploadImage(file, "imgs/post"))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -147,7 +168,12 @@ public class PostServiceImpl implements PostService {
            throw PostOwnerIsNotCurrentUserException.EXCEPTION;
         }
 
-        post.update(request.getTitle(), request.getContent());
+        List<String> oldImageUrls = post.getImageUrls();
+        deleteFiles(oldImageUrls);
+
+        List<String> newImageUrls = uploadFiles(request.getImages());
+
+        post.update(request.getTitle(), request.getContent(), newImageUrls);
     }
 
     @Override
@@ -158,7 +184,17 @@ public class PostServiceImpl implements PostService {
             throw PostOwnerIsNotCurrentUserException.EXCEPTION;
         }
 
+        deleteFiles(post.getImageUrls());
+
         postRepository.delete(post);
+    }
+
+    private void deleteFiles(List<String> imageUrls) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            return;
+        }
+
+        imageUtils.deleteImages(imageUrls);
     }
 
     @Override

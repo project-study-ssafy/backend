@@ -2,7 +2,6 @@ package com.ssafeople.backend.domain.post.domain;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.comment.domain.Comment;
-import com.ssafeople.backend.domain.post.domain.vo.PostInfoVO;
 import com.ssafeople.backend.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -52,6 +51,11 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private final List<Comment> comments = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "post_image_urls", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "image_url")
+    private final List<String> imageUrls = new ArrayList<>();
+
     public Post(String title, String content, User user, Board board) {
         this.title = title;
         this.content = content;
@@ -61,22 +65,20 @@ public class Post {
         user.getPosts().add(this);
     }
 
-    public PostInfoVO getPostInfo() {
-        return PostInfoVO.builder()
-                .id(id)
-                .userId(user.getId())
-                .boardId(board.getId())
-                .title(title)
-                .content(content)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
-                .comments(comments)
-                .build();
-    }
-
-    public void update(String title, String content) {
+    public Post(String title, String content, User user, Board board, List<String> ImageUrls) {
         this.title = title;
         this.content = content;
+        this.user = user;
+        this.board = board;
+        this.imageUrls.addAll(ImageUrls);
+
+        user.getPosts().add(this);
+    }
+
+    public void update(String title, String content, List<String> urls) {
+        this.title = title;
+        this.content = content;
+        this.imageUrls.addAll(urls);
         this.updatedAt = LocalDateTime.now();
     }
 
