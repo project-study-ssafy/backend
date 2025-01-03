@@ -3,6 +3,7 @@ package com.ssafeople.backend.global.stomp;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.chatting.UserNotLoggedInException;
 import com.ssafeople.backend.global.utils.user.UserUtils;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -28,6 +29,11 @@ public class StompHandler implements ChannelInterceptor {
 
         if (accessor.getCommand() == StompCommand.SUBSCRIBE) {
 
+            accessor = StompHeaderAccessor.wrap(message);
+            String token = Objects.requireNonNull(accessor.getFirstNativeHeader("access-token")).split(" ")[1];
+
+            log.info("token : {}", token);
+
             String destination = accessor.getDestination();
             String substring = destination.substring(destination.lastIndexOf("/") + 1);
 
@@ -35,7 +41,7 @@ public class StompHandler implements ChannelInterceptor {
             log.info("destination: {}", destination);
 
             try {
-                User user = userUtils.getCurrentUser();
+                User user = userUtils.getCurrentUser(token);
                 log.info("User {} subscribed to room {}", user.getId(), roomId);
             } catch (Exception e) {
                 log.error("Unauthorized access attempt to room {}", roomId);

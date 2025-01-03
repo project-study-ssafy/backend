@@ -5,4 +5,5 @@ import com.ssafeople.backend.domain.user.domain.User;
 
 public interface UserUtils {
     User getCurrentUser();
+    User getCurrentUser(String token);
 }
