@@ -1,11 +1,11 @@
 package com.ssafeople.backend.domain.post.presentation.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Builder
 public class PostSummaryResponse {
     private final Long id;
@@ -16,4 +16,6 @@ public class PostSummaryResponse {
     private final Short likeCount;
     private final Short commentCount;
     private final Short viewCount;
+
+    private final String imageUrl;
 }
