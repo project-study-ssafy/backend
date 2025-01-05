@@ -54,8 +54,8 @@ public class PostServiceImpl implements PostService {
                             .title(post.getTitle())
                             .nickName(post.getUser().getNickname())
                             .createdAt(post.getCreatedAt())
-                            .commentCount(post.getCommentCount())
-                            .likeCount(post.getLikesCount())
+                            .commentCount((short) post.getComments().size())
+                            .likeCount((short) post.getLikes().size())
                             .viewCount(post.getViewCount())
                             .build();
             responses.add(response);
@@ -81,9 +81,10 @@ public class PostServiceImpl implements PostService {
                             .title(post.getTitle())
                             .nickName(post.getUser().getNickname())
                             .createdAt(post.getCreatedAt())
-                            .commentCount(post.getCommentCount())
-                            .likeCount(post.getLikesCount())
+                            .commentCount((short) post.getComments().size())
+                            .likeCount((short) post.getLikes().size())
                             .viewCount(post.getViewCount())
+                            .imageUrl(post.getImageUrls().isEmpty() ? null : post.getImageUrls().get(0))
                             .build();
             responses.add(response);
         }
@@ -108,9 +109,10 @@ public class PostServiceImpl implements PostService {
                         .title(post.getTitle())
                         .nickName(post.getUser().getNickname())
                         .createdAt(post.getCreatedAt())
-                        .commentCount(post.getCommentCount())
-                        .likeCount(post.getLikesCount())
+                        .commentCount((short) post.getComments().size())
+                        .likeCount((short) post.getLikes().size())
                         .viewCount(post.getViewCount())
+                        .imageUrl(post.getImageUrls().isEmpty() ? null : post.getImageUrls().get(0))
                         .build())
                 .toList();
 
@@ -118,9 +120,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public PostDetailResponse getPostById(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+
+        post.view();
+
         return PostDetailResponse
                 .builder()
                 .id(post.getId())
@@ -130,9 +134,9 @@ public class PostServiceImpl implements PostService {
                 .userId(post.getUser().getId())
                 .nickName(post.getUser().getNickname())
                 .imageUrls(post.getImageUrls())
-                .commentCount(post.getCommentCount())
+                .commentCount((short) post.getComments().size())
                 .viewCount(post.getViewCount())
-                .likeCount(post.getLikesCount())
+                .likeCount((short) post.getLikes().size())
                 .build();
     }
 

@@ -2,6 +2,7 @@ package com.ssafeople.backend.domain.post.domain;
 
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.comment.domain.Comment;
+import com.ssafeople.backend.domain.like.domain.Like;
 import com.ssafeople.backend.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -48,8 +49,14 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(name = "view_count")
+    private Short viewCount;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private final List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private final List<Like> likes = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "post_image_urls", joinColumns = @JoinColumn(name = "post_id"))
@@ -61,6 +68,7 @@ public class Post {
         this.content = content;
         this.user = user;
         this.board = board;
+        this.viewCount = (short) 0;
 
         user.getPosts().add(this);
     }
@@ -70,6 +78,7 @@ public class Post {
         this.content = content;
         this.user = user;
         this.board = board;
+
         this.imageUrls.addAll(ImageUrls);
 
         user.getPosts().add(this);
@@ -78,11 +87,13 @@ public class Post {
     public void update(String title, String content, List<String> urls) {
         this.title = title;
         this.content = content;
+
+        this.imageUrls.clear();
         this.imageUrls.addAll(urls);
         this.updatedAt = LocalDateTime.now();
     }
 
-    private final Short viewCount = (short) 0;
-    private final Short commentCount = (short) 0;
-    private final Short likesCount = (short) 0;
+    public void view() {
+        this.viewCount++;
+    }
 }
