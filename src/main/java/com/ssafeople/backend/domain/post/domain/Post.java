@@ -63,16 +63,6 @@ public class Post {
     @Column(name = "image_url")
     private final List<String> imageUrls = new ArrayList<>();
 
-    public Post(String title, String content, User user, Board board) {
-        this.title = title;
-        this.content = content;
-        this.user = user;
-        this.board = board;
-        this.viewCount = (short) 0;
-
-        user.getPosts().add(this);
-    }
-
     public Post(String title, String content, User user, Board board, List<String> ImageUrls) {
         this.title = title;
         this.content = content;
@@ -80,6 +70,8 @@ public class Post {
         this.board = board;
 
         this.imageUrls.addAll(ImageUrls);
+
+        this.viewCount = (short) 0;
 
         user.getPosts().add(this);
     }
