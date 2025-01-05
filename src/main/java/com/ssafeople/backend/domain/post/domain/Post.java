@@ -70,6 +70,7 @@ public class Post {
         this.content = content;
         this.user = user;
         this.board = board;
+
         this.imageUrls.addAll(ImageUrls);
 
         user.getPosts().add(this);
@@ -78,6 +79,8 @@ public class Post {
     public void update(String title, String content, List<String> urls) {
         this.title = title;
         this.content = content;
+
+        this.imageUrls.clear();
         this.imageUrls.addAll(urls);
         this.updatedAt = LocalDateTime.now();
     }
