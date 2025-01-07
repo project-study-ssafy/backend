@@ -3,7 +3,6 @@ package com.ssafeople.backend.domain.board.service;
 import com.ssafeople.backend.domain.board.domain.Board;
 import com.ssafeople.backend.domain.board.domain.repository.BoardRepository;
 import com.ssafeople.backend.domain.board.presentation.dto.response.BoardInfoResponse;
-import com.ssafeople.backend.global.exception.board.BoardListEmptyException;
 import com.ssafeople.backend.global.exception.board.BoardNotInRepositoryException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +23,6 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(readOnly = true)
     public List<BoardInfoResponse> getAllBoards() {
         List<Board> boards = boardRepository.findAll();
-
-        if (boards.isEmpty()) {
-            throw BoardListEmptyException.EXCEPTION;
-        }
 
         List<BoardInfoResponse> responses = new ArrayList<>();
         for (Board board : boards) {

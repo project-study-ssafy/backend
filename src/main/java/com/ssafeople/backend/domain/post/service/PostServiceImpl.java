@@ -10,7 +10,6 @@ import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteReque
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
-import com.ssafeople.backend.global.exception.post.PostListEmptyException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
 import com.ssafeople.backend.global.utils.upload.ImageUtils;
@@ -42,10 +41,6 @@ public class PostServiceImpl implements PostService {
     public List<PostSummaryResponse> getPostsRegardlessBoardId() {
         List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
-        if (posts.isEmpty()) {
-            throw PostListEmptyException.EXCEPTION;
-        }
-
         List<PostSummaryResponse> responses = new ArrayList<>();
         for (Post post : posts) {
             PostSummaryResponse response =
@@ -68,10 +63,6 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public List<PostSummaryResponse> getPostsByBoardId(Short boardId) {
         List<Post> posts = postRepository.findByBoardId(boardId);
-
-        if (posts.isEmpty()) {
-            throw PostListEmptyException.EXCEPTION;
-        }
 
         List<PostSummaryResponse> responses = new ArrayList<>();
         for (Post post : posts) {
@@ -98,10 +89,6 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(page - 1, size).withSort(Sort.by(Sort.Direction.DESC, "id"));
 
         Page<Post> postPage = postRepository.findByBoardId(boardId, pageable);
-
-        if (postPage.isEmpty()) {
-            throw PostListEmptyException.EXCEPTION;
-        }
 
         List<PostSummaryResponse> responses = postPage.getContent().stream()
                 .map(post -> PostSummaryResponse.builder()
@@ -148,7 +135,7 @@ public class PostServiceImpl implements PostService {
         List<String> imageUrls = uploadFiles(request.getImages());
 
         Post post = new Post(request.getTitle(), request.getContent(), user, board, imageUrls);
-
+        log.info("view: {} ", post.getViewCount());
         postRepository.save(post);
     }
 
