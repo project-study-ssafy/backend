@@ -42,11 +42,6 @@ public class PostServiceImpl implements PostService {
         List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
         List<PostSummaryResponse> responses = new ArrayList<>();
-
-        if (posts.isEmpty()) {
-            return responses;
-        }
-
         for (Post post : posts) {
             PostSummaryResponse response =
                     PostSummaryResponse.builder()
@@ -70,11 +65,6 @@ public class PostServiceImpl implements PostService {
         List<Post> posts = postRepository.findByBoardId(boardId);
 
         List<PostSummaryResponse> responses = new ArrayList<>();
-
-        if (posts.isEmpty()) {
-            return responses;
-        }
-
         for (Post post : posts) {
             PostSummaryResponse response =
                     PostSummaryResponse.builder()
@@ -99,10 +89,6 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(page - 1, size).withSort(Sort.by(Sort.Direction.DESC, "id"));
 
         Page<Post> postPage = postRepository.findByBoardId(boardId, pageable);
-
-        if (postPage.isEmpty()) {
-            return new PageImpl<>(new ArrayList<>(), pageable, postPage.getTotalElements());
-        }
 
         List<PostSummaryResponse> responses = postPage.getContent().stream()
                 .map(post -> PostSummaryResponse.builder()

@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,10 +33,6 @@ public class CommentServiceImpl implements CommentService {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<Comment> commentPage = commentRepository.findByPostId(postId, pageable);
-
-        if(commentPage.isEmpty()) {
-            return new PageImpl<>(new ArrayList<>(), pageable, commentPage.getTotalElements());
-        }
 
         List<CommentResponse> comments = commentPage.getContent().stream()
                 .map(comment -> CommentResponse.builder()

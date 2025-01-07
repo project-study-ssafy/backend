@@ -24,13 +24,7 @@ public class BoardServiceImpl implements BoardService {
     public List<BoardInfoResponse> getAllBoards() {
         List<Board> boards = boardRepository.findAll();
 
-
         List<BoardInfoResponse> responses = new ArrayList<>();
-
-        if (boards.isEmpty()) {
-            return responses;
-        }
-
         for (Board board : boards) {
             BoardInfoResponse response =
                     BoardInfoResponse.builder()
