@@ -7,7 +7,6 @@ import com.ssafeople.backend.domain.comment.presentation.dto.response.CommentRes
 import com.ssafeople.backend.domain.post.domain.Post;
 import com.ssafeople.backend.domain.post.domain.repository.PostRepository;
 import com.ssafeople.backend.domain.user.domain.User;
-import com.ssafeople.backend.global.exception.comment.CommentListEmptyException;
 import com.ssafeople.backend.global.exception.comment.CommentNotExistException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.CommentOwnerIsNotCurrentUserException;
@@ -19,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
         Page<Comment> commentPage = commentRepository.findByPostId(postId, pageable);
 
         if(commentPage.isEmpty()) {
-            throw CommentListEmptyException.EXCEPTION;
+            return new PageImpl<>(new ArrayList<>(), pageable, commentPage.getTotalElements());
         }
 
         List<CommentResponse> comments = commentPage.getContent().stream()
@@ -59,6 +59,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
     }
 
+    @Override
     public void deleteComment(User user, Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> CommentNotExistException.EXCEPTION);
 
