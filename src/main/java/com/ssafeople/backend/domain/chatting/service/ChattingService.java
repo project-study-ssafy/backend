@@ -7,5 +7,5 @@ import java.util.List;
 public interface ChattingService {
     ChattingResponse sendMessage(Short roomId, String content, User user);
 
-    List<ChattingResponse> getChattingRoomsMessages(Short roomId, User user);
+    List<ChattingResponse> getChattingRoomsMessages(Short roomId);
 }

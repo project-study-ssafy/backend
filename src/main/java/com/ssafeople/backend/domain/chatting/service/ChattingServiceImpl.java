@@ -7,7 +7,6 @@ import com.ssafeople.backend.domain.chatting.domain.room.repository.ChattingRoom
 import com.ssafeople.backend.domain.chatting.presentation.dto.response.ChattingResponse;
 import com.ssafeople.backend.domain.user.domain.User;
 import com.ssafeople.backend.global.exception.chatting.NotExistChattingRoomException;
-import com.ssafeople.backend.global.exception.chatting.UserNotLoggedInException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -56,13 +55,9 @@ public class ChattingServiceImpl implements ChattingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ChattingResponse> getChattingRoomsMessages(Short roomId, User user) {
+    public List<ChattingResponse> getChattingRoomsMessages(Short roomId) {
         ChattingRoom chattingRoom = chattingRoomRepository.findById(roomId)
             .orElseThrow(() -> NotExistChattingRoomException.EXCEPTION);
-
-        if (!chattingRoom.getIsAnonymous() && user == null) {
-            throw UserNotLoggedInException.EXCEPTION;
-        }
         return getChattingResponses(chattingRoom);
     }
 

@@ -2,8 +2,6 @@ package com.ssafeople.backend.domain.chatting.presentation;
 
 import com.ssafeople.backend.domain.chatting.presentation.dto.response.ChattingResponse;
 import com.ssafeople.backend.domain.chatting.service.ChattingService;
-import com.ssafeople.backend.domain.user.domain.User;
-import com.ssafeople.backend.global.exception.user.UserNotFoundException;
 import com.ssafeople.backend.global.utils.user.UserUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +22,8 @@ public class ChatDateController {
 
     @GetMapping("/{roomId}")
     public List<ChattingResponse> getMessages(@PathVariable("roomId") Short roomId) {
-        User user = null;
-        try {
-            userUtils.getCurrentUser();
-        } catch (UserNotFoundException e) {
-           log.info("로그인 하지 않은 사용자");
-        }
-        return chattingService.getChattingRoomsMessages(roomId, user);
+        userUtils.getCurrentUser();
+        return chattingService.getChattingRoomsMessages(roomId);
     }
 
 }
