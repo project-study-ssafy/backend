@@ -10,7 +10,6 @@ import com.ssafeople.backend.domain.post.presentation.dto.request.PostWriteReque
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostDetailResponse;
 import com.ssafeople.backend.domain.post.presentation.dto.response.PostSummaryResponse;
 import com.ssafeople.backend.domain.user.domain.User;
-import com.ssafeople.backend.global.exception.post.PostListEmptyException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.PostOwnerIsNotCurrentUserException;
 import com.ssafeople.backend.global.utils.upload.ImageUtils;
@@ -42,11 +41,12 @@ public class PostServiceImpl implements PostService {
     public List<PostSummaryResponse> getPostsRegardlessBoardId() {
         List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
+        List<PostSummaryResponse> responses = new ArrayList<>();
+
         if (posts.isEmpty()) {
-            throw PostListEmptyException.EXCEPTION;
+            return responses;
         }
 
-        List<PostSummaryResponse> responses = new ArrayList<>();
         for (Post post : posts) {
             PostSummaryResponse response =
                     PostSummaryResponse.builder()
@@ -69,11 +69,12 @@ public class PostServiceImpl implements PostService {
     public List<PostSummaryResponse> getPostsByBoardId(Short boardId) {
         List<Post> posts = postRepository.findByBoardId(boardId);
 
+        List<PostSummaryResponse> responses = new ArrayList<>();
+
         if (posts.isEmpty()) {
-            throw PostListEmptyException.EXCEPTION;
+            return responses;
         }
 
-        List<PostSummaryResponse> responses = new ArrayList<>();
         for (Post post : posts) {
             PostSummaryResponse response =
                     PostSummaryResponse.builder()
@@ -100,7 +101,7 @@ public class PostServiceImpl implements PostService {
         Page<Post> postPage = postRepository.findByBoardId(boardId, pageable);
 
         if (postPage.isEmpty()) {
-            throw PostListEmptyException.EXCEPTION;
+            return new PageImpl<>(new ArrayList<>(), pageable, postPage.getTotalElements());
         }
 
         List<PostSummaryResponse> responses = postPage.getContent().stream()
@@ -148,7 +149,7 @@ public class PostServiceImpl implements PostService {
         List<String> imageUrls = uploadFiles(request.getImages());
 
         Post post = new Post(request.getTitle(), request.getContent(), user, board, imageUrls);
-
+        log.info("view: {} ", post.getViewCount());
         postRepository.save(post);
     }
 
