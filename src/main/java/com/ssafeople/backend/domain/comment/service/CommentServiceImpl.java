@@ -11,6 +11,7 @@ import com.ssafeople.backend.global.exception.comment.CommentListEmptyException;
 import com.ssafeople.backend.global.exception.comment.CommentNotExistException;
 import com.ssafeople.backend.global.exception.post.PostNotExistException;
 import com.ssafeople.backend.global.exception.user.CommentOwnerIsNotCurrentUserException;
+import com.ssafeople.backend.global.utils.notify.NotifyUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final NotifyUtils notifyUtils;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,10 +57,15 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void writeComment(CommentWriteRequest request, User user, Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> PostNotExistException.EXCEPTION);
+
         Comment comment = new Comment(request.getContent(), post, user);
         commentRepository.save(comment);
+
+        // Post 주인에게 알림을 보낸다.
+        notifyUtils.sendNotification(post);
     }
 
+    @Override
     public void deleteComment(User user, Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> CommentNotExistException.EXCEPTION);
 
