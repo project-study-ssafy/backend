@@ -46,7 +46,9 @@ public enum ErrorCode {
 
     ADMIN_LOGIN_FAILED(400, "비밀번호가 일치하지 않습니다."),
     NOT_ADMIN(400, "관리자 계정이 아닙니다."),
-    DUPLICATE_CHATTING_NICKNAME(422, "중복된 채팅 닉네임입니다.");
+    DUPLICATE_CHATTING_NICKNAME(422, "중복된 채팅 닉네임입니다."),
+
+    NOT_EXIST_NOTIFY(404, "해당 알림이 존재하지 않습니다.");
 
     private final int status;
     private final String reason;
